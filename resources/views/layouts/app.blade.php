@@ -5,25 +5,19 @@
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1">
 
-    <title>Laravel</title>
+    <title>Booking System</title>
 
     <!-- Fonts -->
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.5.0/css/font-awesome.min.css" integrity="sha384-XdYbMnZ/QjLh6iI4ogqCTaIjrFk87ip+ekIjefZch0Y+PvJ8CDYtEs1ipDmPorQ+" crossorigin="anonymous">
     <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Lato:100,300,400,700">
 
     <!-- Styles -->
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/3.3.6/css/bootstrap.min.css" integrity="sha384-1q8mTJOASx8j1Au+a5WDVnPi2lkFfwwEAa8hDDdjZlpLegxhjVME1fgjWPGmkzs7" crossorigin="anonymous">
+    <link rel="stylesheet" href="{!! asset('/components/bootstrap3/css/bootstrap.css') !!}">
+    <link rel="stylesheet" href="{!! asset('/components/bootstrap3/css/bootstrap-responsive.css') !!}">
+    <link rel="stylesheet" href="{!! asset('/css/calendar.css') !!}">
     {{-- <link href="{{ elixir('css/app.css') }}" rel="stylesheet"> --}}
 
-    <style>
-        body {
-            font-family: 'Lato';
-        }
-
-        .fa-btn {
-            margin-right: 6px;
-        }
-    </style>
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-datetimepicker/4.17.37/css/bootstrap-datetimepicker.css" rel="stylesheet">
 </head>
 
 <body id="app-layout">
@@ -49,9 +43,9 @@
                 <!-- Left Side Of Navbar -->
                 <ul class="nav navbar-nav">
                     @if (!Auth::guest())
-                        <li><a href="{{ url('/home') }}">Bookings</a></li>
-                        <li><a href="{{ url('/home') }}">Process Booking</a></li>
-                        <li><a href="{{ url('/home') }}">Customers</a></li>
+                        <li @if(isset($active) && $active == "booking") class="active" @endif><a href="{{ url('/booking') }}">Bookings</a></li>
+                        <li @if(isset($active) && $active == "process_booking") class="active" @endif><a href="{{ url('/home') }}">Process Booking</a></li>
+                        <li @if(isset($active) && $active == "customer") class="active" @endif><a href="{{ url('/customer') }}">Customers</a></li>
                     @endif
                 </ul>
 
@@ -76,14 +70,25 @@
         <div class="row">
             <div class="col-md-12">
                 <hr/>
-                <span class="small text-muted">&copy; {{date('Y')}} Exeter Barber Shop</span>
+                <span class="small text-muted">&copy; {{date('Y')}} - Exeter Barber Shop</span>
+                <br/><br/>
             </div>
         </div>
     </div>
 
     <!-- JavaScripts -->
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/2.2.3/jquery.min.js" integrity="sha384-I6F5OKECLVtK/BL+8iSLDEHowSAfUo76ZL9+kGAgTRdiByINKJaqTPH/QVNS1VDb" crossorigin="anonymous"></script>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/3.3.6/js/bootstrap.min.js" integrity="sha384-0mSbJDEHialfmuBBQP6A4Qrprq5OVfW37PRR3j5ELqxss1yVqOtnepnHVP9aJ7xS" crossorigin="anonymous"></script>
+    <script type="text/javascript" src="{!! asset('/components/jquery/jquery.min.js') !!}"></script>
+    <script type="text/javascript" src="{!! asset('/components/bootstrap2/js/bootstrap.min.js') !!}"></script>
+    <script type="text/javascript" src="{!! asset('/components/underscore/underscore-min.js') !!}"></script>
+    <script type="text/javascript" src="{!! asset('/components/jstimezonedetect/jstz.min.js') !!}"></script>
+    <script type="text/javascript" src="{!! asset('/js/calendar.js') !!}"></script>
+    <script type="text/javascript" src="{!! asset('/js/app.js') !!}"></script>
     {{-- <script src="{{ elixir('js/app.js') }}"></script> --}}
+
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/moment.js/2.10.6/moment.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-datetimepicker/4.17.37/js/bootstrap-datetimepicker.min.js"></script>
+
+    @yield('script')
+
 </body>
 </html>
