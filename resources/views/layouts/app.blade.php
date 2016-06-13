@@ -13,7 +13,6 @@
 
     <!-- Styles -->
     <link rel="stylesheet" href="{!! asset('/components/bootstrap3/css/bootstrap.css') !!}">
-    <link rel="stylesheet" href="{!! asset('/components/bootstrap3/css/bootstrap-responsive.css') !!}">
     <link rel="stylesheet" href="{!! asset('/css/calendar.css') !!}">
     {{-- <link href="{{ elixir('css/app.css') }}" rel="stylesheet"> --}}
 
@@ -44,7 +43,7 @@
                 <ul class="nav navbar-nav">
                     @if (!Auth::guest())
                         <li @if(isset($active) && $active == "booking") class="active" @endif><a href="{{ url('/booking') }}">Bookings</a></li>
-                        <li @if(isset($active) && $active == "process_booking") class="active" @endif><a href="{{ url('/home') }}">Process Booking</a></li>
+                        <li @if(isset($active) && $active == "process_booking") class="active" @endif><a href="#">Process Booking</a></li>
                         <li @if(isset($active) && $active == "customer") class="active" @endif><a href="{{ url('/customer') }}">Customers</a></li>
                     @endif
                 </ul>
@@ -78,11 +77,10 @@
 
     <!-- JavaScripts -->
     <script type="text/javascript" src="{!! asset('/components/jquery/jquery.min.js') !!}"></script>
-    <script type="text/javascript" src="{!! asset('/components/bootstrap2/js/bootstrap.min.js') !!}"></script>
+    <script type="text/javascript" src="{!! asset('/components/bootstrap3/js/bootstrap.min.js') !!}"></script>
     <script type="text/javascript" src="{!! asset('/components/underscore/underscore-min.js') !!}"></script>
     <script type="text/javascript" src="{!! asset('/components/jstimezonedetect/jstz.min.js') !!}"></script>
     <script type="text/javascript" src="{!! asset('/js/calendar.js') !!}"></script>
-    <script type="text/javascript" src="{!! asset('/js/app.js') !!}"></script>
     {{-- <script src="{{ elixir('js/app.js') }}"></script> --}}
 
     <script src="https://cdnjs.cloudflare.com/ajax/libs/moment.js/2.10.6/moment.min.js"></script>

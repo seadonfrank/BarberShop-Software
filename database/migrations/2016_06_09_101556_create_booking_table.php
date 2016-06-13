@@ -16,7 +16,7 @@ class CreateBookingTable extends Migration
         Schema::create('bookings', function (Blueprint $table) {
             $table->increments('id');
             $table->integer('customer_id');
-            $table->decimal('user_is');
+            $table->decimal('user_id');
             $table->enum('status', ['Processed', 'Finalise', 'Canceled']);
             $table->timestamps();
         });

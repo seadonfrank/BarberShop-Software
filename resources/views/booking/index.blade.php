@@ -37,8 +37,96 @@
         </div>
     </div>
 </div>
+
+<!-- Modal -->
+<div class="modal fade" id="details" tabindex="-1" role="dialog" aria-labelledby="booking_details">
+    <div class="modal-dialog" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+                <h4 class="modal-title" id="myModalLabel">Booking Summary</h4>
+            </div>
+            <div class="modal-body">
+                <span id="name_det"></span>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-danger" data-dismiss="modal">Close</button>
+            </div>
+        </div>
+    </div>
+</div>
 @endsection
 
 @section('script')
+    <script type="text/javascript">
+        (function($) {
 
+            "use strict";
+
+            var options = {
+                events_source: '/events',
+                view: 'month',
+                tmpl_path: 'tmpls/',
+                tmpl_cache: false,
+                day: new Date().toISOString().slice(0,10),
+                onAfterEventsLoad: function(events) {
+                    if(!events) {
+                        return;
+                    }
+                    var list = $('#eventlist');
+                    list.html('');
+
+                    $.each(events, function(key, val) {
+                        $(document.createElement('li'))
+                                .html('<a href="#">' + val.title + '</a>')
+                                .appendTo(list);
+                    });
+                },
+                onAfterViewLoad: function(view) {
+                    $('.page-header h3').text(this.getTitle());
+                    $('.btn-group button').removeClass('active');
+                    $('button[data-calendar-view="' + view + '"]').addClass('active');
+                },
+                classes: {
+                    months: {
+                        general: 'label'
+                    }
+                }
+            };
+
+            var calendar = $('#calendar').calendar(options);
+
+            $('.btn-group button[data-calendar-nav]').each(function() {
+                var $this = $(this);
+                $this.click(function() {
+                    calendar.navigate($this.data('calendar-nav'));
+                });
+            });
+
+            $('.btn-group button[data-calendar-view]').each(function() {
+                var $this = $(this);
+                $this.click(function() {
+                    calendar.view($this.data('calendar-view'));
+                });
+            });
+
+            $('#events-modal .modal-header, #events-modal .modal-footer').click(function(e){
+                //e.preventDefault();
+                //e.stopPropagation();
+            });
+        }(jQuery));
+
+        function detail_booking(id){
+            $('#details').modal('show');
+
+            $.ajax({
+                url: '/event/'+id,
+                type: 'get',
+                dataType: 'json',
+                success: function(data) {
+                   // $('#name_det').html(data.name);
+                }
+            });
+        }
+    </script>
 @endsection

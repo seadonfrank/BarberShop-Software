@@ -98,4 +98,73 @@ class BookingController extends Controller
     {
         //
     }
+
+    public function events() {
+        return '{
+            "success": 1,
+            "result": [
+                {
+                    "id": "293",
+                    "title": "This is warning class event with very long title to check how it fits to event in day view",
+                    "class": "event-warning",
+                    "start": "1465579633000",
+                    "end":   "1465579633000"
+                },
+                {
+                    "id": "276",
+                    "title": "Short day event",
+                    "class": "event-success",
+                    "start": "1363245600000",
+                    "end":   "1363252200000"
+                },
+                {
+                    "id": "294",
+                    "title": "This is information class ",
+                    "class": "event-info",
+                    "start": "1363111200000",
+                    "end":   "1363284086400"
+                },
+                {
+                    "id": "297",
+                    "title": "This is success event",
+                    "class": "event-success",
+                    "start": "1363234500000",
+                    "end":   "1363284062400"
+                },
+                {
+                    "id": "54",
+                    "title": "This is simple event",
+                    "class": "",
+                    "start": "1363712400000",
+                    "end":   "1363716086400"
+                },
+                {
+                    "id": "532",
+                    "title": "This is inverse event",
+                    "url": "http://www.example.com/",
+                    "class": "event-inverse",
+                    "start": "1364407200000",
+                    "end":   "1364493686400"
+                },
+                {
+                    "id": "548",
+                    "title": "This is special event",
+                    "class": "event-special",
+                    "start": "1363197600000",
+                    "end":   "1363629686400"
+                },
+                {
+                    "id": "295",
+                    "title": "Event 3",
+                    "class": "event-important",
+                    "start": "1364320800000",
+                    "end":   "1364407286400"
+                }
+            ]
+        }';
+    }
+
+    public function event($id) {
+        return array('name'=>$id);
+    }
 }

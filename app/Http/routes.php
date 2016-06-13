@@ -25,4 +25,10 @@ Route::resource('product', 'ProductController');
 
 Route::resource('booking', 'BookingController');
 
+Route::get('events', 'BookingController@events');
+
+Route::get('event/{id}', 'BookingController@event');
+
+
+
 
