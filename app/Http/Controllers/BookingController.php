@@ -10,6 +10,9 @@ use DB;
 
 use Log;
 
+use App\Service;
+
+use App\Booking;
 
 class BookingController extends Controller
 {
@@ -40,7 +43,13 @@ class BookingController extends Controller
         //
         $customers = DB::table('customers')->select('id', 'name')->get();
         $users = DB::table('users')->select('id', 'name')->get();
-        return view('booking.create', ['customers' => $customers, 'users' => $users, 'active' => 'booking']);
+        $services = DB::table('services')->select('id', 'name')->get();
+        return view('booking.create', [
+            'customers' => $customers,
+            'users' => $users,
+            'services' => $services,
+            'active' => 'booking'
+        ]);
     }
 
     /**
@@ -52,6 +61,13 @@ class BookingController extends Controller
     public function store(Request $request)
     {
         //
+        $booking = new Booking();
+        $booking->customer_id = $request->get('customer_id');
+        $booking->user_id = $request->get('user_id');
+        $booking->status = "Finalise";
+        $booking->save();
+
+        $booking->services()->attach(1, array('cost'=>10));
     }
 
     /**
@@ -166,5 +182,14 @@ class BookingController extends Controller
 
     public function event($id) {
         return array('name'=>$id);
+    }
+
+    public function availability($stylist, $start, $services) {
+        $availability = DB::table('booking')
+            ->select(DB::raw('count(*) as user_count, status'))
+            ->where('status', '<>', 1)
+            ->groupBy('status')
+            ->get();
+
     }
 }

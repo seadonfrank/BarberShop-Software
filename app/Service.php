@@ -4,11 +4,11 @@ namespace App;
 
 use Illuminate\Database\Eloquent\Model;
 
-class Product extends Model
+class Service extends Model
 {
     //
     public function bookings()
     {
-        return $this->belongsToMany('App\booking');
+        return $this->belongsToMany('App\Booking');
     }
 }

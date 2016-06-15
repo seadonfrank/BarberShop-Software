@@ -23,6 +23,8 @@ Route::resource('customer', 'CustomerController');
 
 Route::resource('product', 'ProductController');
 
+Route::resource('service', 'ServiceController');
+
 Route::resource('booking', 'BookingController');
 
 Route::get('events', 'BookingController@events');

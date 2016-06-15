@@ -14,7 +14,11 @@
     <!-- Styles -->
     <link rel="stylesheet" href="{!! asset('/components/bootstrap3/css/bootstrap.css') !!}">
     <link rel="stylesheet" href="{!! asset('/css/calendar.css') !!}">
+    <link rel="stylesheet" href="{!! asset('/css/app.css') !!}">
     {{-- <link href="{{ elixir('css/app.css') }}" rel="stylesheet"> --}}
+
+    <!-- CSS -->
+    <link rel="stylesheet" type="text/css" href="//cdnjs.cloudflare.com/ajax/libs/chosen/1.4.2/chosen.min.css">
 
     <link href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-datetimepicker/4.17.37/css/bootstrap-datetimepicker.css" rel="stylesheet">
 </head>
@@ -85,6 +89,9 @@
 
     <script src="https://cdnjs.cloudflare.com/ajax/libs/moment.js/2.10.6/moment.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-datetimepicker/4.17.37/js/bootstrap-datetimepicker.min.js"></script>
+
+    <!-- JS -->
+    <script type="text/javascript" src="//cdnjs.cloudflare.com/ajax/libs/chosen/1.4.2/chosen.jquery.min.js"></script>
 
     @yield('script')
 
