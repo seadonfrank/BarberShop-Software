@@ -222,9 +222,10 @@
                     success: function(data) {
                         $('#end').val(data.end_date_time);
 
-                        data.availabilities.forEach(function(availability) {
-                            console.log(availability);
-                        });
+                       // for (index = 0; index < data.availabilities.length; ++index) {
+                            console.log(data.availabilities);
+                        //}
+
                         $('#availability_content').html();
 
                     }

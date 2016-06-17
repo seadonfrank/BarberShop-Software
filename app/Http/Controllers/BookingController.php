@@ -10,7 +10,9 @@ use DB;
 
 use Log;
 
-use App\Service;
+use App\Customer;
+
+use App\User;
 
 use App\Booking;
 
@@ -241,16 +243,28 @@ class BookingController extends Controller
             ->where('bookings.status', '!=', "Canceled")
             ->get();
 
-        if(count($availabilities)) {
-            $avail_end_date_time = new \DateTime($availabilities[0]->start_date_time);
-            $avail_start_date_time = new \DateTime($availabilities[0]->start_date_time);
-            foreach($availabilities as $availability) {
-                $duration = explode(':', $availability->duration);
+        $temp_availabilities = array();
+        foreach($availabilities as $availability) {
+            $temp_availabilities[$availability->booking_id]['start_date_time'] = $availability->start_date_time;
+            $temp_availabilities[$availability->booking_id]['service_ids'][] = $availability->service_id;
+            $temp_availabilities[$availability->booking_id]['service_names'][] = $availability->name;
+            $temp_availabilities[$availability->booking_id]['service_costs'][] = $availability->cost;
+            $temp_availabilities[$availability->booking_id]['service_durations'][] = $availability->duration;
+            $temp_availabilities[$availability->booking_id]['customer'] = Customer::find($availability->customer_id);
+            $temp_availabilities[$availability->booking_id]['user'] = User::find($availability->user_id);;
+            $temp_availabilities[$availability->booking_id]['status'] = $availability->status;
+        }
+        $availabilities = $temp_availabilities;
+        foreach($availabilities as $key=>$value) {
+            $avail_end_date_time = new \DateTime($value['start_date_time']);
+            $avail_start_date_time = new \DateTime($value['start_date_time']);
+            foreach($value['service_durations'] as $duration) {
+                $duration = explode(':', $duration);
                 $avail_end_date_time->modify("+{$duration[0]} hours");
                 $avail_end_date_time->modify("+{$duration[1]} minutes");
                 $avail_end_date_time->modify("+{$duration[2]} seconds");
             }
-            $availabilities["end_date_time"] = date('Y-m-d H:i:s',$avail_end_date_time->getTimestamp());
+            $availabilities[$key]['end_date_time'] = date('Y-m-d H:i:s',$avail_end_date_time->getTimestamp());
 
             if((($start_date_time->getTimestamp() >= $avail_start_date_time->getTimestamp()) &&
                     ($start_date_time->getTimestamp() <= $avail_end_date_time->getTimestamp())) ||
