@@ -75,20 +75,21 @@
 
                 <div class="panel panel-default">
                     <div class="panel-heading">
-                        <h3 class="panel-title">Availability</h3>
+                        <h3 class="panel-title">Availability Details</h3>
                     </div>
                     <div class="panel-body">
                         <div class="col-md-12">
-                            <p id="availability_heading">
-                                Select a <b>customer</b>, <b>stylist</b> and a <b>start date & time</b> to see the availability
-                            </p>
-                            <div id="availability_content">
+                            <label id="availability_heading">
+                                Enter the booking details to see availability
+                            </label>
+                            <p id="availability_content">
 
-                            </div>
+                            </p>
                         </div>
                     </div>
                 </div>
             </div>
+
             <div class="col-md-8">
                 <div class="panel panel-info">
                     <div class="panel-heading">
@@ -150,8 +151,9 @@
                                     @endif
                                 </div>
                             </div>
+
                             <div class="">
-                                <button type="submit" class="col-md-12  btn btn-success">
+                                <button disabled id="create_booking" type="submit" class="col-md-12  btn btn-success">
                                     Create Booking
                                 </button>
                             </div>
@@ -207,13 +209,22 @@
         function check_availability() {
             if($('.select2').val() == null || $('#customer').val() == "" || $('#stylist').val() == "" || $('#start').val() == ""){
                 $('#availability_heading').html(
-                    "Select a <b>customer</b>, <b>stylist</b> and a <b>start date & time</b> to see the availability"
+                    "Enter the booking details to see availability"
                 );
+
                 $('#end').val("This field will be auto populated");
+
+                $('#availability_content').html('');
+
+                document.getElementById("create_booking").disabled = true;
             } else {
                 $('#availability_heading').html(
-                    "Showing availability for <b>"+$('#start').val().slice(0,10)+"</b>"
+                    "Showing availability for the day : "+$('#start').val().slice(0,10)
                 );
+
+                $('#availability_content').html('');
+
+                document.getElementById("create_booking").disabled = true;
 
                 $.ajax({
                     url: '/availability/'+$('#stylist').val()+'/'+$('#customer').val()+'/'+$('#start').val()+'/'+$('.select2').val(),
@@ -222,12 +233,28 @@
                     success: function(data) {
                         $('#end').val(data.end_date_time);
 
-                       // for (index = 0; index < data.availabilities.length; ++index) {
-                            console.log(data.availabilities);
-                        //}
+                        document.getElementById("create_booking").disabled = !data.available;
 
-                        $('#availability_content').html();
+                        var bookings = '<hr/><div class="btn-group btn-group-xs" role="group">'
+                                +'No bookings information found'
+                                +'</div>';
 
+                        $.each(data.availabilities, function( key, value ) {
+                            bookings = '<hr/><div class="btn-group btn-group-xs" role="group">'
+                                    +'<button class="btn btn-warning" type="button">'
+                                    +'<i class="fa fa-calendar"></i> '+value.start_date_time
+                                    +'<button class="btn btn-danger" type="button">'
+                                    +'<i class="fa fa-calendar"></i> '+value.end_date_time
+                                    +'</button>'
+                                    +'</div><br/>'
+                                    +'<div class="btn-group btn-group-xs" role="group">'
+                                    +'<i class="fa fa-scissors"></i> '+value.user.name
+                                    +' | '
+                                    +'<i class="fa fa-user"></i> '+value.customer.name
+                                    +'</div>';
+                        });
+
+                        $('#availability_content').html(bookings);
                     }
                 });
             }
