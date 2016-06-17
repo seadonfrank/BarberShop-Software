@@ -207,23 +207,64 @@ class BookingController extends Controller
         return array('name'=>$id);
     }
 
-    public function availability($user_id, $customer_id, $date_time, $duration) {
-        $availability = DB::table('booking_service')
+    public function availability($user_id, $customer_id, $start_date_time, $service_ids) {
+        $available = true;
+
+        $durations = DB::table('services')->whereRaw('id in ('.$service_ids.')')->get();
+
+        $total_duration = "00:00:00";
+        foreach($durations as $duration) {
+            $temp_time = array();
+            $time1 = explode(':', $duration->duration);
+            $time2 = explode(':', $total_duration);
+            $temp_time[0] = $time1[0] + $time2[0];
+            $temp_time[1] = $time1[1] + $time2[1];
+            $temp_time[2] = $time1[2] + $time2[2];
+            $total_duration = implode(':', $temp_time);
+        }
+
+        $end_date_time = new \DateTime($start_date_time);
+        $start_date_time = new \DateTime($start_date_time);
+        $duration = explode(':', $total_duration);
+        $end_date_time->modify("+{$duration[0]} hours");
+        $end_date_time->modify("+{$duration[1]} minutes");
+        $end_date_time->modify("+{$duration[2]} seconds");
+
+        $availabilities = DB::table('booking_service')
             ->join('bookings', 'bookings.id', '=', 'booking_service.booking_id')
             ->join('services', 'services.id', '=', 'booking_service.service_id')
-            ->whereDate('booking_service.start_date_time', '=', \DateTime::createFromFormat('Y-m-d H:i:s', $date_time)->format('Y-m-d'))
-            //->whereDate('booking_service.start_date_time', '<=', \DateTime::createFromFormat('Y-m-d H:i:s', $date_time)->format('Y-m-d'))
-            ->where('bookings.user_id', '=', $user_id)
-            ->orWhere('bookings.customer_id', '=', $customer_id)
+            ->whereRaw('DATE(booking_service.start_date_time) = "'.date('Y-m-d',$start_date_time->getTimestamp()).'"')
+            ->where(function ($query) use($user_id, $customer_id) {
+                $query->where('bookings.user_id', '=', $user_id)
+                    ->orWhere('bookings.customer_id', '=', $customer_id);
+            })
             ->where('bookings.status', '!=', "Canceled")
             ->get();
 
-        foreach($availability as $avail) {
-            //if($date_time >= $avail['start_date_time'] || $date_time <= $avail['start_date_time'])
+        if(count($availabilities)) {
+            $avail_end_date_time = new \DateTime($availabilities[0]->start_date_time);
+            $avail_start_date_time = new \DateTime($availabilities[0]->start_date_time);
+            foreach($availabilities as $availability) {
+                $duration = explode(':', $availability->duration);
+                $avail_end_date_time->modify("+{$duration[0]} hours");
+                $avail_end_date_time->modify("+{$duration[1]} minutes");
+                $avail_end_date_time->modify("+{$duration[2]} seconds");
+            }
+            $availabilities["end_date_time"] = date('Y-m-d H:i:s',$avail_end_date_time->getTimestamp());
+
+            if((($start_date_time->getTimestamp() >= $avail_start_date_time->getTimestamp()) &&
+                    ($start_date_time->getTimestamp() <= $avail_end_date_time->getTimestamp())) ||
+                (($end_date_time->getTimestamp() >= $avail_start_date_time->getTimestamp()) &&
+                    ($end_date_time->getTimestamp() <= $avail_end_date_time->getTimestamp()))) {
+                $available = false;
+            }
         }
 
-
-        return $availability;
-
+        return array(
+            'availabilities' => $availabilities,
+            'end_date_time' => date('Y-m-d H:i:s',$end_date_time->getTimestamp()),
+            'duration' => $total_duration,
+            'available' => $available
+        );
     }
 }

@@ -5,7 +5,7 @@
     <div class="row">
         <div class="col-md-12">
             <div class="col-md-12" >
-                <h1>Bookings</h1>
+                <h2>Bookings</h2>
                 <a class="btn btn-primary" href="{{ url('/booking/create') }}"><i class="fa fa-btn fa-plus-circle"></i> New Booking</a>
                 <hr/>
             </div>
