@@ -14,6 +14,8 @@ use App\Service;
 
 use App\Booking;
 
+use Illuminate\Support\Facades\Validator;
+
 class BookingController extends Controller
 {
     public function __construct()
@@ -61,13 +63,34 @@ class BookingController extends Controller
     public function store(Request $request)
     {
         //
+        $validator = Validator::make($request->toArray(), array(
+            'customer' => 'required|max:255|numeric',
+            'stylist' => 'required|max:255|numeric',
+            'start' => 'required|date_format:Y-m-d H:i:s',
+        ));
+
+        if (count($request->get('services')) <=  0) {
+            $validator->after(function ($validator) {
+                $validator->getMessageBag()->add('services', 'The services field is required.');
+            });
+        }
+
+        if($validator->fails()) {
+            return redirect('booking/create')
+                ->withErrors($validator);
+        }
+
         $booking = new Booking();
-        $booking->customer_id = $request->get('customer_id');
-        $booking->user_id = $request->get('user_id');
+        $booking->customer_id = $request->get('customer');
+        $booking->user_id = $request->get('stylist');
         $booking->status = "Finalise";
         $booking->save();
 
-        $booking->services()->attach(1, array('cost'=>10));
+        foreach($request->get('services') as $service) {
+            $booking->services()->attach($service, array('start_date_time'=>$request->get("start")));
+        }
+
+        return redirect('booking');
     }
 
     /**
@@ -184,12 +207,23 @@ class BookingController extends Controller
         return array('name'=>$id);
     }
 
-    public function availability($stylist, $start, $services) {
-        $availability = DB::table('booking')
-            ->select(DB::raw('count(*) as user_count, status'))
-            ->where('status', '<>', 1)
-            ->groupBy('status')
+    public function availability($user_id, $customer_id, $date_time, $duration) {
+        $availability = DB::table('booking_service')
+            ->join('bookings', 'bookings.id', '=', 'booking_service.booking_id')
+            ->join('services', 'services.id', '=', 'booking_service.service_id')
+            ->whereDate('booking_service.start_date_time', '=', \DateTime::createFromFormat('Y-m-d H:i:s', $date_time)->format('Y-m-d'))
+            //->whereDate('booking_service.start_date_time', '<=', \DateTime::createFromFormat('Y-m-d H:i:s', $date_time)->format('Y-m-d'))
+            ->where('bookings.user_id', '=', $user_id)
+            ->orWhere('bookings.customer_id', '=', $customer_id)
+            ->where('bookings.status', '!=', "Canceled")
             ->get();
+
+        foreach($availability as $avail) {
+            //if($date_time >= $avail['start_date_time'] || $date_time <= $avail['start_date_time'])
+        }
+
+
+        return $availability;
 
     }
 }

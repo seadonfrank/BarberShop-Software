@@ -6,7 +6,7 @@
         <div class="col-md-12">
             <h3>New Booking</h3>
             <hr/>
-            <form class="" role="form" method="POST" action="{{ url('/customer') }}">
+            <form class="" role="form" method="POST" action="{{ url('/booking') }}">
                 {{ csrf_field() }}
                 <div class="col-md-4">
                     <div class="panel panel-primary">
@@ -14,16 +14,24 @@
                             <h3 class="panel-title">Customer Details</h3>
                         </div>
                         <div class="panel-body">
-                            <div class="form-group{{ $errors->has('customer_id') ? ' has-error' : '' }}">
-                                <select id="customer_id" class="chosen form-control" name="customer_id" value="{{ old('customer_id') }}">
-                                    <option value="">Select a Customer</option>
-                                    @foreach($customers as $customer)
-                                        <option value="{{$customer->id}}">{{$customer->name}}</option>
-                                    @endforeach
-                                </select>
+                            <div class="col-md-12">
+                                <div class="form-group{{ $errors->has('customer') ? ' has-error' : '' }}">
+                                    <select id="customer" onchange="check_availability()" class="chosen form-control" name="customer" value="{{ old('customer') }}">
+                                        <option value="">Select a Customer</option>
+                                        @foreach($customers as $customer)
+                                            <option value="{{$customer->id}}">{{$customer->name}}</option>
+                                        @endforeach
+                                    </select>
+
+                                    @if ($errors->has('customer'))
+                                        <span class="help-block">
+                                        <strong>{{ $errors->first('customer') }}</strong>
+                                    </span>
+                                    @endif
+                                </div>
                             </div>
 
-                            <div class="row" id="customer_details" style="display: none">
+                            <div id="customer_details" style="display: none">
                                 <div class="col-md-12">
                                     <label for="name" class="col-md-5 control-label">Name:</label>
                                     <p class="col-md-7" id="name"></p>
@@ -69,8 +77,13 @@
                             <h3 class="panel-title">Availability</h3>
                         </div>
                         <div class="panel-body">
-                            <div class="row">
+                            <div class="col-md-12">
+                                <p id="availability_heading">
+                                    Select a <b>customer</b>, <b>stylist</b> and a <b>start date & time</b> to see the availability
+                                </p>
+                                <div id="availability_content">
 
+                                </div>
                             </div>
                         </div>
                     </div>
@@ -81,25 +94,38 @@
                             <h3 class="panel-title">Booking Details</h3>
                         </div>
                         <div class="panel-body">
-                            <div class="col-md-12">
+                            <div class="">
                                 <div class="col-md-6">
-                                    <div class="form-group{{ $errors->has('user_id') ? ' has-error' : '' }}">
-                                        <label for="user_id" class="control-label">Stylist</label>
-                                        <select id="user_id" class="form-control" name="user_id" value="{{ old('user_id') }}">
+                                    <div class="form-group{{ $errors->has('stylist') ? ' has-error' : '' }}">
+                                        <label for="stylist" class="control-label">Stylist</label>
+                                        <select id="stylist" onchange="check_availability()" class="form-control" name="stylist" value="{{ old('stylist') }}">
+                                            <option value="">Select a Stylist</option>
                                             @foreach($users as $user)
                                                 <option value="{{$user->id}}">{{$user->name}}</option>
                                             @endforeach
                                         </select>
+
+                                        @if ($errors->has('stylist'))
+                                            <span class="help-block">
+                                                <strong>{{ $errors->first('stylist') }}</strong>
+                                            </span>
+                                        @endif
                                     </div>
 
-                                    <div class="form-group">
-                                        <label for="start" class="control-label">Start Date & Time</label>
+                                    <div class="form-group{{ $errors->has('start') ? ' has-error' : '' }}">
+                                    <label for="start" class="control-label">Start Date & Time</label>
                                         <div class='input-group date' id='datetimepicker'>
                                             <input placeholder="2016-12-20 17:16:18" name="start" id="start" type='text' class="form-control" />
                                             <span class="input-group-addon">
                                                 <span class="glyphicon glyphicon-calendar"></span>
                                             </span>
                                         </div>
+
+                                        @if ($errors->has('start'))
+                                            <span class="help-block">
+                                                <strong>{{ $errors->first('start') }}</strong>
+                                            </span>
+                                        @endif
                                     </div>
 
                                     <div class="form-group">
@@ -108,19 +134,27 @@
                                     </div>
                                 </div>
                                 <div class="col-md-6">
-                                    <div class="form-group{{ $errors->has('service_id') ? ' has-error' : '' }}">
-                                        <label for="service_id" class="control-label">Services</label>
-                                        <select id="service_id" class="select2 form-control" name="service_id" multiple="true" value="{{ old('service_id') }}">
+                                    <div class="form-group{{ $errors->has('services') ? ' has-error' : '' }}">
+                                        <label for="services" class="control-label">Services</label>
+                                        <select id="services" onchange="check_availability()" class="select2 form-control" name="services[]" multiple="true" value="{{ old('services') }}">
                                             @foreach($services as $service)
                                                 <option value="{{$service->id}}">{{$service->name}}</option>
                                             @endforeach
                                         </select>
+
+                                        @if ($errors->has('services'))
+                                            <span class="help-block">
+                                                <strong>{{ $errors->first('services') }}</strong>
+                                            </span>
+                                        @endif
                                     </div>
                                 </div>
+                                <div class="">
+                                    <button type="submit" class="col-md-12  btn btn-success">
+                                        Create Booking
+                                    </button>
+                                </div>
                             </div>
-                            <button type="submit" class="col-md-12 btn btn-success">
-                                Create Booking
-                            </button>
                         </div>
                     </div>
                 </div>
@@ -135,8 +169,11 @@
         $(function () {
             $('#datetimepicker').datetimepicker({
                 format: 'YYYY-MM-DD H:mm:ss'
+            }).on('dp.change', function (event) {
+                check_availability();
             });
         });
+
 
         jQuery(document).ready(function(){
             $(".chosen").chosen();
@@ -166,5 +203,34 @@
                 $("#customer_details").hide();
             }
         });
+
+        function check_availability(){
+            if($('.select2').val() == null || $('#customer').val() == "" || $('#stylist').val() == "" || $('#start').val() == ""){
+                $('#availability_heading').val(
+                        "Select a <b>customer</b>, <b>stylist</b> and a <b>start date & time</b> to see the availability"
+                );
+            } else {
+                $('#availability_heading').val(
+                        "Showing availability for "+$('#start').val()
+                );
+            }
+            /*$.ajax({
+                url: '/availability/'+$( ".chosen option:selected" ).val(),
+                type: 'get',
+                dataType: 'json',
+                success: function(data) {
+                    $('#name').html(data.name);
+                    $('#email_address').html(data.email_address);
+                    $('#phone_number').html(data.phone_number);
+                    $('#send_reminders').html((data.send_reminders == 1) ? "Yes" : "No");
+                    $('#is_student').html((data.is_student == 1) ? "Yes" : "No");
+                    $('#is_child').html((data.is_child == 1) ? "Yes" : "No");
+                    $('#is_military').html((data.is_military == 1) ? "Yes" : "No");
+                    $('#is_beard').html((data.is_beard == 1) ? "Yes" : "No");
+                    $('#next_reminder').html(data.next_reminder);
+                }
+            });
+            console.log($('.select2').val());*/
+        }
     </script>
 @endsection

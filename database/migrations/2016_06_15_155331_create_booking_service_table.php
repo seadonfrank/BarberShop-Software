@@ -17,7 +17,7 @@ class CreateBookingServiceTable extends Migration
             $table->increments('id');
             $table->integer('booking_id');
             $table->integer('service_id');
-            $table->decimal('cost');
+            $table->dateTime('start_date_time');
             $table->timestamps();
         });
     }

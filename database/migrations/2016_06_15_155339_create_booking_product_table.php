@@ -17,7 +17,7 @@ class CreateBookingProductTable extends Migration
             $table->increments('id');
             $table->integer('booking_id');
             $table->integer('product_id');
-            $table->decimal('cost');
+            $table->integer('quantity');
             $table->timestamps();
         });
     }
