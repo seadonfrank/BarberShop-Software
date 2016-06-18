@@ -242,9 +242,12 @@
                         $.each(data.availabilities, function( key, value ) {
                             bookings = '<hr/><div class="btn-group btn-group-xs" role="group">'
                                     +'<button class="btn btn-warning" type="button">'
-                                    +'<i class="fa fa-calendar"></i> '+value.start_date_time
+                                    +'<i class="fa fa-clock-o"></i> '+value.start_date_time.slice(11,19)
                                     +'<button class="btn btn-danger" type="button">'
-                                    +'<i class="fa fa-calendar"></i> '+value.end_date_time
+                                    +'<i class="fa fa-clock-o"></i> '+value.end_date_time.slice(11,19)
+                                    +'</button>'
+                                    +'<button class="btn btn-default" type="button">'
+                                    +'Services <span class="badge">'+value.service_durations.length+'</span>'
                                     +'</button>'
                                     +'</div><br/>'
                                     +'<div class="btn-group btn-group-xs" role="group">'

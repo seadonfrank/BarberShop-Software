@@ -140,73 +140,72 @@ class BookingController extends Controller
         //
     }
 
-    public function events() {
-        return '{
-            "success": 1,
-            "result": [
-                {
-                    "id": "293",
-                    "title": "This is warning class event with very long title to check how it fits to event in day view",
-                    "class": "event-warning",
-                    "start": "1465579633000",
-                    "end":   "1465579633000"
-                },
-                {
-                    "id": "276",
-                    "title": "Short day event",
-                    "class": "event-success",
-                    "start": "1363245600000",
-                    "end":   "1363252200000"
-                },
-                {
-                    "id": "294",
-                    "title": "This is information class ",
-                    "class": "event-info",
-                    "start": "1363111200000",
-                    "end":   "1363284086400"
-                },
-                {
-                    "id": "297",
-                    "title": "This is success event",
-                    "class": "event-success",
-                    "start": "1363234500000",
-                    "end":   "1363284062400"
-                },
-                {
-                    "id": "54",
-                    "title": "This is simple event",
-                    "class": "",
-                    "start": "1363712400000",
-                    "end":   "1363716086400"
-                },
-                {
-                    "id": "532",
-                    "title": "This is inverse event",
-                    "url": "http://www.example.com/",
-                    "class": "event-inverse",
-                    "start": "1364407200000",
-                    "end":   "1364493686400"
-                },
-                {
-                    "id": "548",
-                    "title": "This is special event",
-                    "class": "event-special",
-                    "start": "1363197600000",
-                    "end":   "1363629686400"
-                },
-                {
-                    "id": "295",
-                    "title": "Event 3",
-                    "class": "event-important",
-                    "start": "1364320800000",
-                    "end":   "1364407286400"
-                }
-            ]
-        }';
+    public function events(request $request) {
+        //class : event-success event-warning event-info event-inverse event-important event-special
+
+        $temp_events = DB::table('booking_service')
+            ->join('bookings', 'bookings.id', '=', 'booking_service.booking_id')
+            ->join('services', 'services.id', '=', 'booking_service.service_id')
+            ->get();
+
+        $events = array();
+        foreach($temp_events as $event) {
+            $events[$event->booking_id]['start'] = $event->start_date_time;
+            $events[$event->booking_id]['service_durations'][] = $event->duration;
+            $events[$event->booking_id]['title'] = "<i class='fa fa-scissors'></i> ".User::find($event->user_id)->name." | <i class='fa fa-user'></i> ".Customer::find($event->customer_id)->name;
+        }
+
+        $result = array();
+        foreach($events as $key=>$value) {
+            $eve_end_date_time = new \DateTime($value['start']);
+            $eve_start_date_time = new \DateTime($value['start']);
+            foreach($value['service_durations'] as $duration) {
+                $duration = explode(':', $duration);
+                $eve_end_date_time->modify("+{$duration[0]} hours");
+                $eve_end_date_time->modify("+{$duration[1]} minutes");
+                $eve_end_date_time->modify("+{$duration[2]} seconds");
+            }
+            unset($events[$key]['service_durations']);
+            $events[$key]['id']=$key."";
+            $events[$key]['end'] = strtotime(date('Y-m-d H:i:s',$eve_end_date_time->getTimestamp()))."000";
+            $events[$key]['start'] = strtotime(date('Y-m-d H:i:s',$eve_start_date_time->getTimestamp()))."000";
+            $events[$key]['class'] = "event-important";
+            $result[] = $events[$key];
+        }
+
+        return array("success" => 1, "result" =>$result);
     }
 
     public function event($id) {
-        return array('name'=>$id);
+        $events = DB::table('booking_service')
+            ->join('bookings', 'bookings.id', '=', 'booking_service.booking_id')
+            ->join('services', 'services.id', '=', 'booking_service.service_id')
+            ->where('bookings.id', '=', $id)
+            ->get();
+
+        $result = array();
+        foreach($events as $event) {
+            $result[$event->booking_id]['start_date_time'] = $event->start_date_time;
+            $result[$event->booking_id]['service_ids'][] = $event->service_id;
+            $result[$event->booking_id]['service_names'][] = $event->name;
+            $result[$event->booking_id]['service_costs'][] = $event->cost;
+            $result[$event->booking_id]['service_durations'][] = $event->duration;
+            $result[$event->booking_id]['customer'] = Customer::find($event->customer_id);
+            $result[$event->booking_id]['user'] = User::find($event->user_id);;
+            $result[$event->booking_id]['status'] = $event->status;
+        }
+        foreach($result as $key=>$value) {
+            $eve_end_date_time = new \DateTime($value['start_date_time']);
+            foreach($value['service_durations'] as $duration) {
+                $duration = explode(':', $duration);
+                $eve_end_date_time->modify("+{$duration[0]} hours");
+                $eve_end_date_time->modify("+{$duration[1]} minutes");
+                $eve_end_date_time->modify("+{$duration[2]} seconds");
+            }
+            $result[$key]['end_date_time'] = date('Y-m-d H:i:s',$eve_end_date_time->getTimestamp());
+        }
+
+        return $result[$id];
     }
 
     public function availability($user_id, $customer_id, $start_date_time, $service_ids) {

@@ -47,10 +47,26 @@
                 <h4 class="modal-title" id="myModalLabel">Booking Summary</h4>
             </div>
             <div class="modal-body">
-                <span id="name_det"></span>
+                <div class="row">
+                    <div class="col-md-12">
+                        <div class="col-md-6">
+                            <h5><i class="fa fa-user"></i> <span id="customer"></span></h5>
+                            <h5><i class="fa fa-scissors"></i> <span id="user"></span></h5>
+                            <h5><i class="fa fa-info"></i> <span id="status"></span></h5>
+                        </div>
+                        <div class="col-md-6">
+                            <h5><i class="fa fa-clock-o"></i> <span id="start"></span></h5>
+                            <h5><i class="fa fa-clock-o"></i> <span id="end"></span></h5>
+                            <h5><i class="fa fa-gbp"></i> <span id="cost"></span></h5>
+                        </div>
+                        <h5 class="col-md-12"><i class="fa fa-cart-plus"></i> <span id="service_names"></span></h5>
+                    </div>
+                </div>
             </div>
             <div class="modal-footer">
-                <button type="button" class="btn btn-danger" data-dismiss="modal">Close</button>
+                <button type="button" class="btn btn-success" data-dismiss="modal"><i class="fa fa-gears"></i> Process Bookng</button>
+                <button type="button" class="btn btn-warning" data-dismiss="modal"><i class="fa fa-pencil-square-o"></i> Edit Booking</button>
+                <button type="button" class="btn btn-danger" data-dismiss="modal"><i class="fa fa-trash-o"></i> Remove Booking</button>
             </div>
         </div>
     </div>
@@ -124,7 +140,17 @@
                 type: 'get',
                 dataType: 'json',
                 success: function(data) {
-                   // $('#name_det').html(data.name);
+                    $('#user').html(data.user.name);
+                    $('#customer').html(data.customer.name);
+                    $('#start').html(data.start_date_time);
+                    $('#end').html(data.end_date_time);
+                    $('#status').html(data.status);
+                    var cost = parseFloat(0);
+                    $.each(data.service_costs, function( key, value ) {
+                        cost = parseFloat(cost,2)+ parseFloat(value,2);
+                    });
+                    $('#cost').html(cost);
+                    $('#service_names').html(data.service_names.join(', '));
                 }
             });
         }
