@@ -29,8 +29,6 @@ Route::resource('booking', 'BookingController');
 
 Route::get('events', 'BookingController@events');
 
-Route::get('event/{id}', 'BookingController@event');
-
 Route::get('availability/{user_id}/{customer_id}/{date_time}/{duration}', 'BookingController@availability');
 
 

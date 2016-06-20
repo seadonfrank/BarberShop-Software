@@ -9,7 +9,7 @@
                 <a class="btn btn-primary" href="{{ url('/booking/create') }}"><i class="fa fa-btn fa-plus-circle"></i> New Booking</a>
                 <hr/>
             </div>
-            <div class="col-md-12">
+            <div class="col-md-12 page-header">
                 <div class="container">
                     <div class="row">
                         <div class="span6 btn-group pull-left">
@@ -24,6 +24,9 @@
                             <button class="btn btn-primary" data-calendar-nav="next">Next >></button>
                         </div>
                     </div>
+                </div>
+                <div class="text-center row col-md-12">
+                    <h3></h3>
                 </div>
             </div>
             <br/>
@@ -64,9 +67,9 @@
                 </div>
             </div>
             <div class="modal-footer">
-                <button type="button" class="btn btn-success" data-dismiss="modal"><i class="fa fa-gears"></i> Process Bookng</button>
-                <button type="button" class="btn btn-warning" data-dismiss="modal"><i class="fa fa-pencil-square-o"></i> Edit Booking</button>
-                <button type="button" class="btn btn-danger" data-dismiss="modal"><i class="fa fa-trash-o"></i> Remove Booking</button>
+                <button type="button" class="btn btn-success" data-dismiss="modal"><i class="fa fa-gears"></i> Process Booking</button>
+                <a id="edit_booking" class="btn btn-warning"><i class="fa fa-pencil-square-o"></i> Edit Booking</a>
+                <button type="button" id="delete_booking" class="btn btn-danger" data-dismiss="modal"><i class="fa fa-trash-o"></i> Remove Booking</button>
             </div>
         </div>
     </div>
@@ -132,11 +135,15 @@
             });
         }(jQuery));
 
-        function detail_booking(id){
+        function detail_booking(id) {
             $('#details').modal('show');
 
+            $('#delete_booking').attr('onclick', 'delete_booking('+id+')');
+
+            $('#edit_booking').attr('href', '/booking/'+id+'/edit');
+
             $.ajax({
-                url: '/event/'+id,
+                url: '/booking/'+id,
                 type: 'get',
                 dataType: 'json',
                 success: function(data) {
@@ -153,6 +160,23 @@
                     $('#service_names').html(data.service_names.join(', '));
                 }
             });
+        }
+
+        function delete_booking(id){
+            if(confirm("Are you sure that you want to delete?")){
+                $.ajax({
+                    url: '/booking/'+id,
+                    type: 'delete',
+                    dataType: 'json',
+                    success: function(data) {
+                        if(data.response) {
+                            location.reload();
+                        } else {
+                            alert("Unable to delete. Please try in some time.");
+                        }
+                    }
+                });
+            }
         }
     </script>
 @endsection

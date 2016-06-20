@@ -104,6 +104,36 @@ class BookingController extends Controller
     public function show($id)
     {
         //
+        $events = DB::table('booking_service')
+            ->join('bookings', 'bookings.id', '=', 'booking_service.booking_id')
+            ->join('services', 'services.id', '=', 'booking_service.service_id')
+            ->where('bookings.id', '=', $id)
+            ->get();
+
+        $result = array();
+        foreach($events as $event) {
+            $result[$event->booking_id]['start_date_time'] = $event->start_date_time;
+            $result[$event->booking_id]['service_ids'][] = $event->service_id;
+            $result[$event->booking_id]['service_names'][] = $event->name;
+            $result[$event->booking_id]['service_costs'][] = $event->cost;
+            $result[$event->booking_id]['service_durations'][] = $event->duration;
+            $result[$event->booking_id]['customer'] = Customer::find($event->customer_id);
+            $result[$event->booking_id]['user'] = User::find($event->user_id);;
+            $result[$event->booking_id]['status'] = $event->status;
+        }
+        foreach($result as $key=>$value) {
+            $eve_end_date_time = new \DateTime($value['start_date_time']);
+            foreach($value['service_durations'] as $duration) {
+                $duration = explode(':', $duration);
+                $eve_end_date_time->modify("+{$duration[0]} hours");
+                $eve_end_date_time->modify("+{$duration[1]} minutes");
+                $eve_end_date_time->modify("+{$duration[2]} seconds");
+            }
+            $result[$key]['id'] = $key;
+            $result[$key]['end_date_time'] = date('Y-m-d H:i:s',$eve_end_date_time->getTimestamp());
+        }
+
+        return $result[$id];
     }
 
     /**
@@ -115,6 +145,16 @@ class BookingController extends Controller
     public function edit($id)
     {
         //
+        $customers = DB::table('customers')->select('id', 'name')->get();
+        $users = DB::table('users')->select('id', 'name')->get();
+        $services = DB::table('services')->select('id', 'name')->get();
+        return view('booking.edit', [
+            'customers' => $customers,
+            'users' => $users,
+            'services' => $services,
+            'booking' => $this->show($id),
+            'active' => 'booking'
+        ]);
     }
 
     /**
@@ -127,6 +167,36 @@ class BookingController extends Controller
     public function update(Request $request, $id)
     {
         //
+        $validator = Validator::make($request->toArray(), array(
+            'customer' => 'required|max:255|numeric',
+            'stylist' => 'required|max:255|numeric',
+            'start' => 'required|date_format:Y-m-d H:i:s',
+        ));
+
+        if (count($request->get('services')) <=  0) {
+            $validator->after(function ($validator) {
+                $validator->getMessageBag()->add('services', 'The services field is required.');
+            });
+        }
+
+        if($validator->fails()) {
+            return redirect('booking/create')
+                ->withErrors($validator);
+        }
+
+        $booking = Booking::find($id);
+        $booking->customer_id = $request->get('customer');
+        $booking->user_id = $request->get('stylist');
+        $booking->status = "Finalise";
+        $booking->save();
+
+        $booking->services()->detach();
+
+        foreach($request->get('services') as $service) {
+            $booking->services()->attach($service, array('start_date_time'=>$request->get("start")));
+        }
+
+        return redirect('booking');
     }
 
     /**
@@ -138,6 +208,9 @@ class BookingController extends Controller
     public function destroy($id)
     {
         //
+        Booking::find($id)->services()->detach();
+        DB::table('bookings')->where('id', '=', $id)->delete();
+        return array("response"=>true);
     }
 
     public function events(request $request) {
@@ -174,38 +247,6 @@ class BookingController extends Controller
         }
 
         return array("success" => 1, "result" =>$result);
-    }
-
-    public function event($id) {
-        $events = DB::table('booking_service')
-            ->join('bookings', 'bookings.id', '=', 'booking_service.booking_id')
-            ->join('services', 'services.id', '=', 'booking_service.service_id')
-            ->where('bookings.id', '=', $id)
-            ->get();
-
-        $result = array();
-        foreach($events as $event) {
-            $result[$event->booking_id]['start_date_time'] = $event->start_date_time;
-            $result[$event->booking_id]['service_ids'][] = $event->service_id;
-            $result[$event->booking_id]['service_names'][] = $event->name;
-            $result[$event->booking_id]['service_costs'][] = $event->cost;
-            $result[$event->booking_id]['service_durations'][] = $event->duration;
-            $result[$event->booking_id]['customer'] = Customer::find($event->customer_id);
-            $result[$event->booking_id]['user'] = User::find($event->user_id);;
-            $result[$event->booking_id]['status'] = $event->status;
-        }
-        foreach($result as $key=>$value) {
-            $eve_end_date_time = new \DateTime($value['start_date_time']);
-            foreach($value['service_durations'] as $duration) {
-                $duration = explode(':', $duration);
-                $eve_end_date_time->modify("+{$duration[0]} hours");
-                $eve_end_date_time->modify("+{$duration[1]} minutes");
-                $eve_end_date_time->modify("+{$duration[2]} seconds");
-            }
-            $result[$key]['end_date_time'] = date('Y-m-d H:i:s',$eve_end_date_time->getTimestamp());
-        }
-
-        return $result[$id];
     }
 
     public function availability($user_id, $customer_id, $start_date_time, $service_ids) {
