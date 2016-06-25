@@ -5,7 +5,7 @@
 			<% _.each(events, function(event) { %>
 				<a href="#" onclick="detail_booking('<%= event.id %>')" data-event-id="<%= event.id %>" data-event-class="<%= event['class'] %>"
 					class="pull-left event <%= event['class'] %>" data-toggle="tooltip"
-					title="<%= event.title %>"></a>
+					title="<%= event.heading %>"></a>
 			<% }); %>
 		</div>
 	<% } %>

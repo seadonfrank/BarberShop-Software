@@ -31,6 +31,8 @@ Route::resource('service', 'ServiceController');
 
 Route::resource('booking', 'BookingController');
 
+Route::post('booking/{id}/cancel', 'BookingController@cancel');
+
 Route::get('process', 'BookingController@getProcess');
 
 Route::post('process/{id}', 'BookingController@postProcess');

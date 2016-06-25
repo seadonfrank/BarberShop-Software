@@ -215,6 +215,14 @@ class BookingController extends Controller
         return array("response"=>true);
     }
 
+    public function cancel($id)
+    {
+        $booking = Booking::find($id);
+        $booking->status = "Canceled";
+        $booking->save();
+        return array("response"=>true);
+    }
+
     public function getProcess()
     {
         //
@@ -278,7 +286,8 @@ class BookingController extends Controller
             $events[$event->booking_id]['start'] = $event->start_date_time;
             $events[$event->booking_id]['service_durations'][] = $event->duration;
             $events[$event->booking_id]['status'] = $event->status;
-            $events[$event->booking_id]['title'] = "<i class='fa fa-scissors'></i> ".User::find($event->user_id)->name." | <i class='fa fa-user'></i> ".Customer::find($event->customer_id)->name;
+            $events[$event->booking_id]['title'] = "<i class='fa fa-scissors'></i> ".User::find($event->user_id)->name." | <i class='fa fa-user'></i> ".Customer::find($event->customer_id)->name." : ".$event->status;
+            $events[$event->booking_id]['heading'] = "Stylist ".User::find($event->user_id)->name." with customer ".Customer::find($event->customer_id)->name." has status ".$event->status;
         }
 
         $result = array();

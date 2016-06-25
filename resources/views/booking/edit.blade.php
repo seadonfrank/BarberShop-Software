@@ -158,6 +158,14 @@
                                 <button disabled id="create_booking" type="submit" class="col-md-12  btn btn-success">
                                     Save Booking
                                 </button>
+                                <br/><br/>
+                                @if($booking['status'] == "Canceled")
+                                    <span class="col-md-12 text-danger">* This Booking is been canceled</span>
+                                @else
+                                    <a onclick="cancel_booking({{$booking['id']}})" href="#" class="col-md-12  btn btn-danger">
+                                        Cancel Booking
+                                    </a>
+                                @endif
                             </div>
                         </div>
                     </div>
@@ -260,6 +268,23 @@
                         });
 
                         $('#availability_content').html(bookings);
+                    }
+                });
+            }
+        }
+
+        function cancel_booking(id) {
+            if(confirm("Are you sure that you want to cancel?")){
+                $.ajax({
+                    url: '/booking/'+id+'/cancel',
+                    type: 'post',
+                    dataType: 'json',
+                    success: function(data) {
+                        if(data.response) {
+                            location.href = "/booking";
+                        } else {
+                            alert("Unable to cancel. Please try in some time.");
+                        }
                     }
                 });
             }

@@ -76,7 +76,7 @@
                 </div>
             </div>
             <div class="modal-footer">
-                <a href="/process" class="btn btn-success"><i class="fa fa-gears"></i> Process Booking</a>
+                <a id="process_booking" class="btn btn-success"><i class="fa fa-gears"></i> Process Booking</a>
                 <a id="edit_booking" class="btn btn-warning"><i class="fa fa-pencil-square-o"></i> Edit Booking</a>
                 <a id="next_booking_button" href="/booking/create" class="btn btn-info"><i class="fa fa-file"></i> Book Next Appointment</a>
                 <button type="button" id="delete_booking" class="btn btn-danger" data-dismiss="modal"><i class="fa fa-trash-o"></i> Remove Booking</button>
@@ -150,6 +150,8 @@
 
             $('#delete_booking').attr('onclick', 'delete_booking('+id+')');
 
+            $('#process_booking').attr('onclick', 'process_booking('+id+')');
+
             $('#edit_booking').attr('href', '/booking/'+id+'/edit');
 
             $.ajax({
@@ -175,10 +177,17 @@
                         $('#next_booking_button').show();
                         $('#next_booking_form').show();
                         $('#edit_booking').hide();
-                    } else {
+                        $('#process_booking').hide();
+                    } else if(data.status == "Finalised") {
                         $('#next_booking_button').hide();
                         $('#next_booking_form').hide();
                         $('#edit_booking').show();
+                        $('#process_booking').show();
+                    } else if(data.status == "Canceled") {
+                        $('#next_booking_button').hide();
+                        $('#next_booking_form').hide();
+                        $('#edit_booking').show();
+                        $('#process_booking').hide();
                     }
                 }
             });
@@ -215,6 +224,23 @@
                     }
                 }
             });
+        }
+
+        function process_booking(id){
+            if(confirm("Are you sure that you want to process this?")){
+                $.ajax({
+                    url: '/process/'+id,
+                    type: 'post',
+                    dataType: 'json',
+                    success: function(data) {
+                        if(data.response) {
+                            location.reload();
+                        } else {
+                            alert("Unable to process. Please try in some time.");
+                        }
+                    }
+                });
+            }
         }
     </script>
 @endsection
