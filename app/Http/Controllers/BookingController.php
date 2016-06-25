@@ -86,6 +86,7 @@ class BookingController extends Controller
         $booking->customer_id = $request->get('customer');
         $booking->user_id = $request->get('stylist');
         $booking->status = "Finalised";
+        $booking->send_reminders = 1;
         $booking->save();
 
         foreach($request->get('services') as $service) {
@@ -188,6 +189,7 @@ class BookingController extends Controller
         $booking->customer_id = $request->get('customer');
         $booking->user_id = $request->get('stylist');
         $booking->status = "Finalised";
+        $booking->send_reminders = 1;
         $booking->save();
 
         $booking->services()->detach();
