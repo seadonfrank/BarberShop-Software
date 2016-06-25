@@ -10,7 +10,7 @@
                 <hr/>
             </div>
             <h5><a href="{{ url('/service/create') }}">Create New</a></h5>
-            <table class="table table-bordred">
+            <table class="table">
                 <tr>
                     <th>Name</th>
                     <th>Cost</th>

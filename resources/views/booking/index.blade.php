@@ -63,12 +63,22 @@
                             <h5><i class="fa fa-gbp"></i> <span id="cost"></span></h5>
                         </div>
                         <h5 class="col-md-12"><i class="fa fa-cart-plus"></i> <span id="service_names"></span></h5>
+                        <div id="next_booking_form">
+                            <hr/><br/>
+                            <div class="form-group">
+                                <div class="col-md-8">
+                                    <input type="text" class="form-control" id="next_reminder" placeholder="2016-12-20 17:16:18">
+                                </div>
+                                <button id="set_reminder" class="col-md-4 btn btn-primary">Set Next Reminder</button>
+                            </div>
+                        </div>
                     </div>
                 </div>
             </div>
             <div class="modal-footer">
-                <button type="button" class="btn btn-success" data-dismiss="modal"><i class="fa fa-gears"></i> Process Booking</button>
+                <a href="/process" class="btn btn-success"><i class="fa fa-gears"></i> Process Booking</a>
                 <a id="edit_booking" class="btn btn-warning"><i class="fa fa-pencil-square-o"></i> Edit Booking</a>
+                <a id="next_booking_button" href="/booking/create" class="btn btn-info"><i class="fa fa-file"></i> Book Next Appointment</a>
                 <button type="button" id="delete_booking" class="btn btn-danger" data-dismiss="modal"><i class="fa fa-trash-o"></i> Remove Booking</button>
             </div>
         </div>
@@ -158,6 +168,18 @@
                     });
                     $('#cost').html(cost);
                     $('#service_names').html(data.service_names.join(', '));
+
+                    $('#set_reminder').attr('onclick', 'set_reminder('+data.customer.id+')');
+
+                    if(data.status == "Processed") {
+                        $('#next_booking_button').show();
+                        $('#next_booking_form').show();
+                        $('#edit_booking').hide();
+                    } else {
+                        $('#next_booking_button').hide();
+                        $('#next_booking_form').hide();
+                        $('#edit_booking').show();
+                    }
                 }
             });
         }
@@ -177,6 +199,22 @@
                     }
                 });
             }
+        }
+
+        function set_reminder(id) {
+            $.ajax({
+                url: '/set_reminder/'+id,
+                type: 'put',
+                dataType: 'json',
+                data: { next_reminder: $('#next_reminder').val() },
+                success: function(data) {
+                    if(data.response) {
+                        location.reload();
+                    } else {
+                        alert("Unable to set reminder. Please check the date format or try in some time.");
+                    }
+                }
+            });
         }
     </script>
 @endsection

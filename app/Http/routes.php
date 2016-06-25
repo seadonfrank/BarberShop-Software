@@ -11,9 +11,13 @@
 |
 */
 
-Route::get('/', function () {
-    return view('welcome');
+Route::group(['middleware' => 'auth'], function () {
+    Route::get('/', function () {
+        return view('welcome');
+    });
 });
+
+Route::get('opt_out_customer/{id}', 'HomeController@opt_out_customer');
 
 Route::auth();
 
@@ -27,10 +31,12 @@ Route::resource('service', 'ServiceController');
 
 Route::resource('booking', 'BookingController');
 
+Route::get('process', 'BookingController@getProcess');
+
+Route::post('process/{id}', 'BookingController@postProcess');
+
 Route::get('events', 'BookingController@events');
 
 Route::get('availability/{user_id}/{customer_id}/{date_time}/{duration}', 'BookingController@availability');
 
-
-
-
+Route::put('set_reminder/{customer_id}', 'CustomerController@set_reminder');

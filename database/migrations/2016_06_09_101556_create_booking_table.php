@@ -17,7 +17,8 @@ class CreateBookingTable extends Migration
             $table->increments('id');
             $table->integer('customer_id');
             $table->integer('user_id');
-            $table->enum('status', ['Processed', 'Finalise', 'Canceled']);
+            $table->enum('status', ['Processed', 'Finalised', 'Canceled']);
+            $table->boolean('send_reminders');
             $table->timestamps();
         });
     }

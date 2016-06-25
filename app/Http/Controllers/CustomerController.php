@@ -12,6 +12,7 @@ use App\Customer;
 
 use Log;
 
+use Illuminate\Support\Facades\Validator;
 
 class CustomerController extends Controller
 {
@@ -154,5 +155,23 @@ class CustomerController extends Controller
         //
         DB::table('customers')->where('id', '=', $id)->delete();
         return array("response"=>true);
+    }
+
+    public function set_reminder(Request $request, $id)
+    {
+        $validator = Validator::make($request->toArray(), array(
+            'next_reminder' => 'required|date_format:Y-m-d H:i:s',
+        ));
+
+        if($validator->fails()) {
+            return array("response"=>false);
+        } else {
+            DB::table('customers')
+                ->where('id', $id)
+                ->update([
+                    'next_reminder' =>  date("Y-m-d H:i:s", strtotime($request->get('next_reminder'))),
+                ]);
+            return array("response"=>true);
+        }
     }
 }

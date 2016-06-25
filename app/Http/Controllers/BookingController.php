@@ -85,7 +85,7 @@ class BookingController extends Controller
         $booking = new Booking();
         $booking->customer_id = $request->get('customer');
         $booking->user_id = $request->get('stylist');
-        $booking->status = "Finalise";
+        $booking->status = "Finalised";
         $booking->save();
 
         foreach($request->get('services') as $service) {
@@ -187,7 +187,7 @@ class BookingController extends Controller
         $booking = Booking::find($id);
         $booking->customer_id = $request->get('customer');
         $booking->user_id = $request->get('stylist');
-        $booking->status = "Finalise";
+        $booking->status = "Finalised";
         $booking->save();
 
         $booking->services()->detach();
@@ -213,18 +213,69 @@ class BookingController extends Controller
         return array("response"=>true);
     }
 
-    public function events(request $request) {
+    public function getProcess()
+    {
+        //
+        $processes = DB::table('booking_service')
+            ->select('bookings.customer_id', 'bookings.user_id', 'bookings.status', 'bookings.created_at',
+            'services.name','services.cost','services.duration',
+            'booking_service.start_date_time', 'booking_service.booking_id', 'booking_service.service_id')
+            ->join('bookings', 'bookings.id', '=', 'booking_service.booking_id')
+            ->join('services', 'services.id', '=', 'booking_service.service_id')
+            ->where('bookings.status', '=', "Finalised")
+            ->get();
+
+        $temp_processes = array();
+        foreach($processes as $process) {
+            $temp_processes[$process->booking_id]['start_date_time'] = $process->start_date_time;
+            $temp_processes[$process->booking_id]['service_ids'][] = $process->service_id;
+            $temp_processes[$process->booking_id]['service_names'][] = $process->name;
+            $temp_processes[$process->booking_id]['service_costs'][] = $process->cost;
+            $temp_processes[$process->booking_id]['service_durations'][] = $process->duration;
+            $temp_processes[$process->booking_id]['customer'] = Customer::find($process->customer_id);
+            $temp_processes[$process->booking_id]['user'] = User::find($process->user_id);;
+            $temp_processes[$process->booking_id]['status'] = $process->status;
+            $temp_processes[$process->booking_id]['created_at'] = $process->created_at;
+        }
+
+        foreach($temp_processes as $key=>$value) {
+            $pro_end_date_time = new \DateTime($value['start_date_time']);
+            foreach($value['service_durations'] as $duration) {
+                $duration = explode(':', $duration);
+                $pro_end_date_time->modify("+{$duration[0]} hours");
+                $pro_end_date_time->modify("+{$duration[1]} minutes");
+                $pro_end_date_time->modify("+{$duration[2]} seconds");
+            }
+            $temp_processes[$key]['end_date_time'] = date('Y-m-d H:i:s',$pro_end_date_time->getTimestamp());
+            $temp_processes[$key]['id'] = $key;
+        }
+
+        return view('booking.process', ['processes' => $temp_processes, 'active' => 'process_booking']);
+    }
+
+    public function postProcess($id)
+    {
+        $booking = Booking::find($id);
+        $booking->status = "Processed";
+        $booking->save();
+        return array("response"=>true);
+    }
+
+    public function events(request $request)
+    {
         //class : event-success event-warning event-info event-inverse event-important event-special
 
         $temp_events = DB::table('booking_service')
             ->join('bookings', 'bookings.id', '=', 'booking_service.booking_id')
             ->join('services', 'services.id', '=', 'booking_service.service_id')
+            ->whereRaw('DATE(booking_service.start_date_time) < "'.date("Y-m-d H:i:s").'"')
             ->get();
 
         $events = array();
         foreach($temp_events as $event) {
             $events[$event->booking_id]['start'] = $event->start_date_time;
             $events[$event->booking_id]['service_durations'][] = $event->duration;
+            $events[$event->booking_id]['status'] = $event->status;
             $events[$event->booking_id]['title'] = "<i class='fa fa-scissors'></i> ".User::find($event->user_id)->name." | <i class='fa fa-user'></i> ".Customer::find($event->customer_id)->name;
         }
 
@@ -242,14 +293,23 @@ class BookingController extends Controller
             $events[$key]['id']=$key."";
             $events[$key]['end'] = strtotime(date('Y-m-d H:i:s',$eve_end_date_time->getTimestamp()))."000";
             $events[$key]['start'] = strtotime(date('Y-m-d H:i:s',$eve_start_date_time->getTimestamp()))."000";
-            $events[$key]['class'] = "event-important";
+            if($value['status'] == "Finalised") {
+                $events[$key]['class'] = "event-important";
+            } elseif($value['status'] == "Processed") {
+                $events[$key]['class'] = "event-success";
+            } elseif($value['status'] == "Canceled") {
+                $events[$key]['class'] = "event-warning";
+            } else {
+                $events[$key]['class'] = "event-info";
+            }
             $result[] = $events[$key];
         }
 
         return array("success" => 1, "result" =>$result);
     }
 
-    public function availability($user_id, $customer_id, $start_date_time, $service_ids) {
+    public function availability($user_id, $customer_id, $start_date_time, $service_ids)
+    {
         $available = true;
 
         $durations = DB::table('services')->whereRaw('id in ('.$service_ids.')')->get();
@@ -275,12 +335,12 @@ class BookingController extends Controller
         $availabilities = DB::table('booking_service')
             ->join('bookings', 'bookings.id', '=', 'booking_service.booking_id')
             ->join('services', 'services.id', '=', 'booking_service.service_id')
-            ->whereRaw('DATE(booking_service.start_date_time) = "'.date('Y-m-d',$start_date_time->getTimestamp()).'"')
+            ->whereRaw('DATE(booking_service.start_date_time) = "'.date('Y-m-d', $start_date_time->getTimestamp()).'"')
             ->where(function ($query) use($user_id, $customer_id) {
                 $query->where('bookings.user_id', '=', $user_id)
                     ->orWhere('bookings.customer_id', '=', $customer_id);
             })
-            ->where('bookings.status', '!=', "Canceled")
+            ->where('bookings.status', '=', "Finalised")
             ->get();
 
         $temp_availabilities = array();

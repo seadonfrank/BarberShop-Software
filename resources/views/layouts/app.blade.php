@@ -47,7 +47,7 @@
                 <ul class="nav navbar-nav">
                     @if (!Auth::guest())
                         <li @if(isset($active) && $active == "booking") class="active" @endif><a href="{{ url('/booking') }}">Bookings</a></li>
-                        <li @if(isset($active) && $active == "process_booking") class="active" @endif><a href="#">Process Booking</a></li>
+                        <li @if(isset($active) && $active == "process_booking") class="active" @endif><a href="/process">Process Booking</a></li>
                         <li @if(isset($active) && $active == "customer") class="active" @endif><a href="{{ url('/customer') }}">Customers</a></li>
                     @endif
                 </ul>
