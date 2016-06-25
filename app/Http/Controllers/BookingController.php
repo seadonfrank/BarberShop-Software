@@ -224,6 +224,7 @@ class BookingController extends Controller
             'booking_service.start_date_time', 'booking_service.booking_id', 'booking_service.service_id')
             ->join('bookings', 'bookings.id', '=', 'booking_service.booking_id')
             ->join('services', 'services.id', '=', 'booking_service.service_id')
+            ->whereRaw('DATE(booking_service.start_date_time) < "'.date("Y-m-d H:i:s").'"')
             ->where('bookings.status', '=', "Finalised")
             ->get();
 
@@ -270,7 +271,6 @@ class BookingController extends Controller
         $temp_events = DB::table('booking_service')
             ->join('bookings', 'bookings.id', '=', 'booking_service.booking_id')
             ->join('services', 'services.id', '=', 'booking_service.service_id')
-            ->whereRaw('DATE(booking_service.start_date_time) < "'.date("Y-m-d H:i:s").'"')
             ->get();
 
         $events = array();
