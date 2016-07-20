@@ -11,17 +11,17 @@
 |
 */
 
-Route::group(['middleware' => 'auth'], function () {
-    Route::get('/', function () {
-        return view('welcome');
-    });
-});
-
-Route::get('opt_out_customer/{id}', 'HomeController@opt_out_customer');
-
 Route::auth();
 
+Route::get('/welcome', function () {
+    return view('welcome');
+});
+
 Route::get('/home', 'HomeController@index');
+
+Route::get('/', array('before' => 'auth', 'uses' => 'BookingController@index'));
+
+Route::get('opt_out_customer/{id}', 'HomeController@opt_out_customer');
 
 Route::resource('customer', 'CustomerController');
 

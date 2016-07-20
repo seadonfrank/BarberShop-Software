@@ -47,7 +47,7 @@
         <div class="modal-content">
             <div class="modal-header">
                 <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
-                <h4 class="modal-title" id="myModalLabel">Booking Summary</h4>
+                <h4 class="modal-title" id="title"></h4>
             </div>
             <div class="modal-body">
                 <div class="row">
@@ -94,7 +94,7 @@
 
             var options = {
                 events_source: '/events',
-                view: 'month',
+                view: 'week',
                 tmpl_path: 'tmpls/',
                 tmpl_cache: false,
                 day: new Date().toISOString().slice(0,10),
@@ -159,10 +159,11 @@
                 type: 'get',
                 dataType: 'json',
                 success: function(data) {
+                    $('#title').html("Booking Summary - "+data.start_date_time.slice(0,10));
                     $('#user').html(data.user.name);
                     $('#customer').html(data.customer.name);
-                    $('#start').html(data.start_date_time);
-                    $('#end').html(data.end_date_time);
+                    $('#start').html(data.start_date_time.slice(11,19));
+                    $('#end').html(data.end_date_time.slice(11,19));
                     $('#status').html(data.status);
                     var cost = parseFloat(0);
                     $.each(data.service_costs, function( key, value ) {
