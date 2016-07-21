@@ -23,11 +23,16 @@ Route::get('/', array('before' => 'auth', 'uses' => 'BookingController@index'));
 
 Route::get('opt_out_customer/{id}', 'HomeController@opt_out_customer');
 
+Route::group(['middleware' => 'App\Http\Middleware\AdminMiddleware'], function()
+{
+    Route::resource('user', 'UserController');
+
+    Route::resource('product', 'ProductController');
+
+    Route::resource('service', 'ServiceController');
+});
+
 Route::resource('customer', 'CustomerController');
-
-Route::resource('product', 'ProductController');
-
-Route::resource('service', 'ServiceController');
 
 Route::resource('booking', 'BookingController');
 

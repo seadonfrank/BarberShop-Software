@@ -50,7 +50,6 @@
             </form>
 
             <h5>
-            <h5>
                 <div class="col-md-9 col-md-offset-2" >
                     <a href="{{ url('/product') }}">Back to list</a>
                 </div>

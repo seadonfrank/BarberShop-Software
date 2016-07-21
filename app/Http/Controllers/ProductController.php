@@ -28,7 +28,7 @@ class ProductController extends Controller
     {
         //
         $products = DB::table('products')->get();
-        return view('product.index', ['products' => $products]);
+        return view('product.index', ['products' => $products, 'active' => 'product']);
     }
 
     /**
@@ -39,7 +39,7 @@ class ProductController extends Controller
     public function create()
     {
         //
-        return view('product.create');
+        return view('product.create', ['active' => 'product']);
     }
 
     /**
@@ -86,7 +86,7 @@ class ProductController extends Controller
     {
         //
         $product = DB::table('products')->where('id', '=', $id)->get();
-        return view('product.edit', ['product' => $product]);
+        return view('product.edit', ['product' => $product, 'active' => 'product']);
     }
 
     /**

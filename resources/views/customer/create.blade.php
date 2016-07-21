@@ -76,6 +76,7 @@
                             <option value="1">True</option>
                             <option value="0">False</option>
                         </select>
+
                         @if ($errors->has('is_student'))
                             <span class="help-block">
                                 <strong>{{ $errors->first('is_student') }}</strong>
@@ -92,6 +93,7 @@
                             <option value="1">True</option>
                             <option value="0">False</option>
                         </select>
+
                         @if ($errors->has('is_child'))
                             <span class="help-block">
                                 <strong>{{ $errors->first('is_child') }}</strong>

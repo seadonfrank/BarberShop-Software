@@ -28,7 +28,7 @@ class ServiceController extends Controller
     {
         //
         $services = DB::table('services')->get();
-        return view('service.index', ['services' => $services]);
+        return view('service.index', ['services' => $services, 'active' => 'service']);
     }
 
     /**
@@ -39,7 +39,7 @@ class ServiceController extends Controller
     public function create()
     {
         //
-        return view('service.create');
+        return view('service.create', ['active' => 'service']);
     }
 
     /**
@@ -89,7 +89,7 @@ class ServiceController extends Controller
     {
         //
         $services = DB::table('services')->where('id', '=', $id)->get();
-        return view('service.edit', ['service' => $services]);
+        return view('service.edit', ['service' => $services, 'active' => 'service']);
     }
 
     /**
