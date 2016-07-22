@@ -41,7 +41,7 @@
                     </div>
                 </div>
 
-                <div class="alert alert-info">
+                <div class="alert alert-info row">
                     <div class="form-group{{ $errors->has('password') ? ' has-error' : '' }}">
                         <label for="password" class="col-md-3 control-label">Password</label>
 
