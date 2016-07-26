@@ -23,6 +23,13 @@ Route::get('/', array('before' => 'auth', 'uses' => 'BookingController@index'));
 
 Route::get('opt_out_customer/{id}', 'HomeController@opt_out_customer');
 
+Route::group(['middleware' => 'auth'], function()
+{
+    Route::get('setting', 'HomeController@getSetting');
+
+    Route::post('setting/{id}', 'HomeController@postSetting');
+});
+
 Route::group(['middleware' => 'App\Http\Middleware\AdminMiddleware'], function()
 {
     Route::resource('user', 'UserController');

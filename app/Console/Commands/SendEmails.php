@@ -2,6 +2,8 @@
 
 namespace App\Console\Commands;
 
+use App\Setting;
+
 use Illuminate\Console\Command;
 
 use Log;
@@ -49,7 +51,7 @@ class SendEmails extends Command
      */
     public function handle()
     {
-        //Log::info("Sending Booking Reminder Emails");
+        //Log::info("Sending Booking Reminder Emails"); // Post-Booking
 
         $customers = DB::table('customers')
             ->where('send_reminders', '=', 1)
@@ -70,10 +72,11 @@ class SendEmails extends Command
             }
         }
 
-        //Log::info("Sending Appointment Reminder Emails");
+        //Log::info("Sending Appointment Reminder Emails"); // Pre-Booking
 
+        $setting = Setting::find(1);
         $earliest_date_time = new \DateTime(date("Y-m-d H:i:s"));
-        $earliest_date_time->modify("-30 minutes");
+        $earliest_date_time->modify("-".$setting->value*(24*60)." minutes");
         $bookings = DB::table('booking_service')
             ->join('bookings', 'bookings.id', '=', 'booking_service.booking_id')
             ->where('bookings.send_reminders', '=', 1)

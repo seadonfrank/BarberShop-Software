@@ -2,6 +2,8 @@
 
 namespace App\Http\Controllers;
 
+use DB;
+use Auth;
 use App\Customer;
 use App\Http\Requests;
 use Illuminate\Http\Request;
@@ -35,5 +37,21 @@ class HomeController extends Controller
         $customer->save();
 
         return "You have been opt-out successfully";
+    }
+
+    public function getSetting()
+    {
+        $settings = DB::table('settings')->where('isadmin', '=', Auth::user()['isadmin'])->get();
+        return view('setting', ['settings' => $settings, 'active' => 'setting']);
+    }
+
+    public function postSetting(Request $request, $id)
+    {
+        DB::table('settings')
+            ->where('id', $id)
+            ->update([
+                'value' => $request->get('data'),
+            ]);
+        return array("response"=>true);
     }
 }

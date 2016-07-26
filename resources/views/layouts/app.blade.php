@@ -66,6 +66,7 @@
                                     <li @if(isset($active) && $active == "user") class="active" @endif><a href="{{ url('/user') }}">Users</a></li>
                                     <li @if(isset($active) && $active == "product") class="active" @endif><a href="{{ url('/product') }}">Products</a></li>
                                     <li @if(isset($active) && $active == "service") class="active" @endif><a href="{{ url('/service') }}">Services</a></li>
+                                    <li @if(isset($active) && $active == "setting") class="active" @endif><a href="{{ url('/setting') }}">Settings</a></li>
                                     <li class="divider"></li>
                                 @endif
                                 <li><a href="{{ url('/logout') }}">Log Off</a></li>
