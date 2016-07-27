@@ -65,11 +65,26 @@ class BookingController extends Controller
     public function store(Request $request)
     {
         //
-        $validator = Validator::make($request->toArray(), array(
-            'customer' => 'required|max:255|numeric',
-            'stylist' => 'required|max:255|numeric',
-            'start' => 'required|date_format:Y-m-d H:i:s',
-        ));
+        $validator = null;
+        $customer_id = $request->get('customer');
+        if(isset($customer_id) && $customer_id != "") {
+            $validator = Validator::make($request->toArray(), array(
+                'customer' => 'required|max:255|numeric',
+
+                'stylist' => 'required|max:255|numeric',
+                'start' => 'required|date_format:Y-m-d H:i:s',
+            ));
+        } else {
+            $validator = Validator::make($request->toArray(), array(
+                'name' => 'required|max:255',
+                'email_address' => 'required|email|max:255|unique:customers',
+                'phone_number' => 'required|max:255',
+                'next_reminder' => 'required|date_format:Y-m-d H:i:s',
+
+                'stylist' => 'required|max:255|numeric',
+                'start' => 'required|date_format:Y-m-d H:i:s',
+            ));
+        }
 
         if (count($request->get('services')) <=  0) {
             $validator->after(function ($validator) {
@@ -83,7 +98,12 @@ class BookingController extends Controller
         }
 
         $booking = new Booking();
-        $booking->customer_id = $request->get('customer');
+        if(isset($customer_id) && $customer_id != "") {
+            $booking->customer_id = $request->get('customer');
+        } else {
+            $customer = new CustomerController();
+            $booking->customer_id = $customer->store($request, true);
+        }
         $booking->user_id = $request->get('stylist');
         $booking->status = "Finalised";
         $booking->send_reminders = 1;

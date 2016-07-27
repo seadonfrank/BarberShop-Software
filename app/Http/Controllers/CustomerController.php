@@ -50,7 +50,7 @@ class CustomerController extends Controller
      * @param  \Illuminate\Http\Request  $request
      * @return \Illuminate\Http\Response
      */
-    public function store(Request $request)
+    public function store(Request $request, $api)
     {
         //
         $this->validate($request, [
@@ -65,7 +65,7 @@ class CustomerController extends Controller
             $reminder = 1;
         else
             $reminder = 0;
-        DB::table('customers')->insert(
+        $id = DB::table('customers')->insertGetId(
             [
                 'name' => $request->get('name'),
                 'email_address' => $request->get('email_address'),
@@ -78,7 +78,11 @@ class CustomerController extends Controller
                 'next_reminder' =>  date("Y-m-d H:i:s", strtotime($request->get('next_reminder'))),
             ]
         );
-        return redirect('customer');
+        if($api){
+            return $id;
+        } else {
+            return redirect('customer');
+        }
     }
 
     /**
