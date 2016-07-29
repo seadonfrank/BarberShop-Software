@@ -46,7 +46,7 @@ class BookingController extends Controller
     {
         //
         $customers = DB::table('customers')->select('id', 'name')->get();
-        $users = DB::table('users')->select('id', 'name')->get();
+        $users = DB::table('users')->select('id', 'name')->where('isadmin', '!=', 1)->get();
         $services = DB::table('services')->select('id', 'name')->get();
         return view('booking.create', [
             'customers' => $customers,
@@ -72,7 +72,8 @@ class BookingController extends Controller
                 'customer' => 'required|max:255|numeric',
 
                 'stylist' => 'required|max:255|numeric',
-                'start' => 'required|date_format:Y-m-d H:i:s',
+                'start_date' => 'required|date_format:Y-m-d',
+                'start_time' => 'required|date_format:H:i',
             ));
         } else {
             $validator = Validator::make($request->toArray(), array(
@@ -82,11 +83,20 @@ class BookingController extends Controller
                 'next_reminder' => 'required|date_format:Y-m-d H:i:s',
 
                 'stylist' => 'required|max:255|numeric',
-                'start' => 'required|date_format:Y-m-d H:i:s',
+                'start_date' => 'required|date_format:Y-m-d',
+                'start_time' => 'required|date_format:H:i',
             ));
         }
 
-        if (count($request->get('services')) <=  0) {
+        $services = DB::table('services')->select('id', 'name')->get();
+        $services_request = array();
+        foreach($services as $service) {
+            if($request->get('service_'.$service->id)){
+                $services_request[] = $service->id;
+            }
+        }
+
+        if (count($services_request) <=  0) {
             $validator->after(function ($validator) {
                 $validator->getMessageBag()->add('services', 'The services field is required.');
             });
@@ -109,8 +119,11 @@ class BookingController extends Controller
         $booking->send_reminders = 1;
         $booking->save();
 
-        foreach($request->get('services') as $service) {
-            $booking->services()->attach($service, array('start_date_time'=>$request->get("start")));
+        foreach($services_request as $service) {
+            $booking->services()->attach(
+                $service,
+                array('start_date_time'=>$request->get("start_date")." ".$request->get("start_time").":00")
+            );
         }
 
         return redirect('booking');
@@ -405,11 +418,52 @@ class BookingController extends Controller
             }
         }
 
+        $stylist_availabilities_this = DB::table('booking_service')
+            ->join('bookings', 'bookings.id', '=', 'booking_service.booking_id')
+            ->join('services', 'services.id', '=', 'booking_service.service_id')
+            ->whereRaw('DATE(booking_service.start_date_time) = "'.date('Y-m-d', $start_date_time->getTimestamp()).'"')
+            ->where('bookings.user_id', '=', $user_id)
+            ->where('bookings.status', '=', "Finalised")
+            ->get();
+
+        $temp_stylist_availabilities_this = array();
+        foreach($stylist_availabilities_this as $stylist_availability_this) {
+            $temp_stylist_availabilities_this[$stylist_availability_this->booking_id]['start_date_time'] = $stylist_availability_this->start_date_time;
+            $temp_stylist_availabilities_this[$stylist_availability_this->booking_id]['service_ids'][] = $stylist_availability_this->service_id;
+            $temp_stylist_availabilities_this[$stylist_availability_this->booking_id]['service_names'][] = $stylist_availability_this->name;
+            $temp_stylist_availabilities_this[$stylist_availability_this->booking_id]['service_costs'][] = $stylist_availability_this->cost;
+            $temp_stylist_availabilities_this[$stylist_availability_this->booking_id]['service_durations'][] = $stylist_availability_this->duration;
+            $temp_stylist_availabilities_this[$stylist_availability_this->booking_id]['customer'] = Customer::find($stylist_availability_this->customer_id);
+            $temp_stylist_availabilities_this[$stylist_availability_this->booking_id]['user'] = User::find($stylist_availability_this->user_id);;
+            $temp_stylist_availabilities_this[$stylist_availability_this->booking_id]['status'] = $stylist_availability_this->status;
+        }
+
+        $stylist_availabilities_all = DB::table('booking_service')
+            ->join('bookings', 'bookings.id', '=', 'booking_service.booking_id')
+            ->join('services', 'services.id', '=', 'booking_service.service_id')
+            ->whereRaw('DATE(booking_service.start_date_time) = "'.date('Y-m-d', $start_date_time->getTimestamp()).'"')
+            ->where('bookings.status', '=', "Finalised")
+            ->get();
+
+        $temp_stylist_availabilities_all = array();
+        foreach($stylist_availabilities_all as $stylist_availability_all) {
+            $temp_stylist_availabilities_all[$stylist_availability_all->booking_id]['start_date_time'] = $stylist_availability_all->start_date_time;
+            $temp_stylist_availabilities_all[$stylist_availability_all->booking_id]['service_ids'][] = $stylist_availability_all->service_id;
+            $temp_stylist_availabilities_all[$stylist_availability_all->booking_id]['service_names'][] = $stylist_availability_all->name;
+            $temp_stylist_availabilities_all[$stylist_availability_all->booking_id]['service_costs'][] = $stylist_availability_all->cost;
+            $temp_stylist_availabilities_all[$stylist_availability_all->booking_id]['service_durations'][] = $stylist_availability_all->duration;
+            $temp_stylist_availabilities_all[$stylist_availability_all->booking_id]['customer'] = Customer::find($stylist_availability_all->customer_id);
+            $temp_stylist_availabilities_all[$stylist_availability_all->booking_id]['user'] = User::find($stylist_availability_all->user_id);;
+            $temp_stylist_availabilities_all[$stylist_availability_all->booking_id]['status'] = $stylist_availability_all->status;
+        }
+
         return array(
             'availabilities' => $availabilities,
             'end_date_time' => date('Y-m-d H:i:s',$end_date_time->getTimestamp()),
             'duration' => $total_duration,
-            'available' => $available
+            'available' => $available,
+            'stylist_availabilities_this' => $temp_stylist_availabilities_this,
+            'stylist_availabilities_all' => $temp_stylist_availabilities_all
         );
     }
 }

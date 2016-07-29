@@ -72,7 +72,7 @@
                         </div>
 
                         <div class="col-md-12">
-                            <p>Or Create a New Customer</p>
+                            <p><label>Or Create a New Customer</label></p>
                         </div>
 
                         <div class="col-md-12">
@@ -116,13 +116,13 @@
                                         </span>
                                     @endif
                                 </div>
-                                <label for="send_reminders" class="col-md-10 control-label">SendReminders</label>
+                                <span class="col-md-10 control-label">SendReminders</span>
                             </div>
 
                             <br/><br/>
 
                             <div class="form-group{{ $errors->has('is_student') ? ' has-error' : '' }}">
-                                <label for="is_student" class="col-md-4 control-label">IsStudent</label>
+                                <span class="col-md-4 control-label">IsStudent</span>
 
                                 <div class="col-md-8">
                                     <select id="is_student" class="form-control" name="is_student" value="{{ old('is_student') }}">
@@ -141,7 +141,7 @@
                             <br/><br/>
 
                             <div class="form-group{{ $errors->has('is_child') ? ' has-error' : '' }}">
-                                <label for="is_child" class="col-md-4 control-label">IsChild</label>
+                                <span class="col-md-4 control-label">IsChild</span>
 
                                 <div class="col-md-8">
                                     <select id="is_child" class="form-control" name="is_child" value="{{ old('is_child') }}">
@@ -160,7 +160,7 @@
                             <br/><br/>
 
                             <div class="form-group{{ $errors->has('is_military') ? ' has-error' : '' }}">
-                                <label for="is_military" class="col-md-4 control-label">IsMilitary</label>
+                                <span class="col-md-4 control-label">IsMilitary</span>
 
                                 <div class="col-md-8">
                                     <select id="is_military" class="form-control" name="is_military" value="{{ old('is_military') }}">
@@ -179,7 +179,7 @@
                             <br/><br/>
 
                             <div class="form-group{{ $errors->has('is_beard') ? ' has-error' : '' }}">
-                                <label for="is_beard" class="col-md-4 control-label">HasBeard</label>
+                                <span class="col-md-4 control-label">HasBeard</span>
 
                                 <div class="col-md-8">
                                     <select id="is_beard" class="form-control" name="is_beard" value="{{ old('is_beard') }}">
@@ -198,7 +198,7 @@
                             <br/><br/>
 
                             <div class="form-group{{ $errors->has('next_reminder') ? ' has-error' : '' }}">
-                                <label for="next_reminder" class="col-md-4 control-label">NextReminder</label>
+                                <span class="col-md-4 control-label">NextReminder</span>
 
                                 <div class="col-md-8">
                                     <div class='input-group date' id='datetimepicker'>
@@ -227,65 +227,68 @@
                     </div>
                     <div class="panel-body">
                         <div class="">
-                            <div class="col-md-6">
-                                <div class="form-group{{ $errors->has('stylist') ? ' has-error' : '' }}">
-                                    <label for="stylist" class="control-label">Stylist</label>
-                                    <select id="stylist" onchange="check_availability()" class="form-control" name="stylist" value="{{ old('stylist') }}">
-                                        <option value="">Select a Stylist</option>
-                                        @foreach($users as $user)
-                                            <option value="{{$user->id}}">{{$user->name}}</option>
-                                        @endforeach
-                                    </select>
+                            <div class="form-group{{ $errors->has('stylist') ? ' has-error' : '' }}">
+                                <label for="stylist" class="control-label">Stylist</label>
+                                <select id="stylist" onchange="check_availability()" class="form-control" name="stylist" value="{{ old('stylist') }}">
+                                    <option value="">Select a Stylist</option>
+                                    @foreach($users as $user)
+                                        <option value="{{$user->id}}">{{$user->name}}</option>
+                                    @endforeach
+                                </select>
 
-                                    @if ($errors->has('stylist'))
-                                        <span class="help-block">
-                                        <strong>{{ $errors->first('stylist') }}</strong>
-                                    </span>
-                                    @endif
-                                </div>
-
-                                <div class="form-group{{ $errors->has('start') ? ' has-error' : '' }}">
-                                    <label for="start" class="control-label">Start Date & Time</label>
-                                    <div class='input-group date' id='datetimepicker1'>
-                                        <input placeholder="2016-12-20 17:16:18" name="start" id="start" type='text' class="form-control" />
-                                        <span class="input-group-addon">
-                                            <span class="glyphicon glyphicon-calendar"></span>
-                                        </span>
-                                    </div>
-
-                                    @if ($errors->has('start'))
-                                        <span class="help-block">
-                                        <strong>{{ $errors->first('start') }}</strong>
-                                    </span>
-                                    @endif
-                                </div>
-
-                                <div class="form-group">
-                                    <label for="end" class="control-label">End Date & Time</label>
-                                    <input placeholder="This field will be auto populated" type='text' name="end" id="end" class="form-control" disabled />
-                                </div>
-                            </div>
-                            <div class="col-md-6">
-                                <div class="form-group{{ $errors->has('services') ? ' has-error' : '' }}">
-                                    <label for="services" class="control-label">Services</label>
-                                    <select id="services" onchange="check_availability()" class="select2 form-control" name="services[]" multiple="true" value="{{ old('services') }}">
-                                        @foreach($services as $service)
-                                            <option value="{{$service->id}}">{{$service->name}}</option>
-                                        @endforeach
-                                    </select>
-
-                                    @if ($errors->has('services'))
-                                        <span class="help-block">
-                                        <strong>{{ $errors->first('services') }}</strong>
-                                    </span>
-                                    @endif
-                                </div>
+                                @if ($errors->has('stylist'))
+                                    <span class="help-block">
+                                    <strong>{{ $errors->first('stylist') }}</strong>
+                                </span>
+                                @endif
                             </div>
 
-                            <div class="">
-                                <button disabled id="create_booking" type="submit" class="col-md-12  btn btn-success">
-                                    Create Booking
-                                </button>
+                            <div class="form-group{{ $errors->has('services') ? ' has-error' : '' }}">
+                                <label for="services" class="control-label">Services</label>
+                                <div class="col-md-12">
+                                    @foreach($services as $service)
+                                        <div class="col-md-6">
+                                            <input id="service_{{$service->id}}" onclick="check_availability()" type="checkbox" class="col-md-2 checkbox" name="service_{{$service->id}}">
+                                            <span class="col-md-10 control-label">{{$service->name}}</span>
+                                        </div>
+                                    @endforeach
+                                    <br/><br/>
+                                </div>
+
+                                @if ($errors->has('services'))
+                                    <span class="help-block">
+                                    <strong>{{ $errors->first('services') }}</strong>
+                                </span>
+                                @endif
+                            </div>
+
+                            <div class="form-group{{ $errors->has('start_date') ? ' has-error' : '' }}">
+                                <label for="start_date" class="control-label">Start Date</label>
+                                <input name="start_date" id="start_date" type='hidden' class="form-control" />
+                                <div class="col-md-12" id="date_container">
+                                </div>
+
+                                @if ($errors->has('start_date'))
+                                    <span class="help-block">
+                                    <strong>{{ $errors->first('start_date') }}</strong>
+                                </span>
+                                @endif
+                            </div>
+
+                            <div class="form-group{{ $errors->has('start_time') ? ' has-error' : '' }}">
+                                <label for="start_time" class="control-label">Start Time</label>
+                                <input name="start_time" id="start_time" type='text' class="form-control" />
+
+                                @if ($errors->has('start_time'))
+                                    <span class="help-block">
+                                    <strong>{{ $errors->first('start_time') }}</strong>
+                                </span>
+                                @endif
+                            </div>
+
+                            <div class="form-group">
+                                <!--<label for="end" class="control-label">End Date & Time</label>-->
+                                <input placeholder="This field will be auto populated" type='hidden' name="end" id="end" class="form-control" disabled />
                             </div>
                         </div>
                     </div>
@@ -298,13 +301,35 @@
                         <h3 class="panel-title">Availability Details</h3>
                     </div>
                     <div class="panel-body">
-                        <div class="col-md-12">
+                        <div class="">
+                            <div class="form-group">
+                                <label for="stylist_availability" class="control-label">Show Stylist Availability</label>
+                                <div class="col-md-12 row">
+                                    <br/>
+                                    <div class="col-md-6 row">
+                                        <input id="stylist_availability" type="radio" class="col-md-1 checkbox" name="stylist_availability">
+                                        <span class="col-md-10 control-label">This Stylist</span>
+                                    </div>
+                                    <div class="col-md-6 row">
+                                        <input id="stylist_availability" type="radio" class="col-md-1 checkbox" name="stylist_availability">
+                                        <span class="col-md-10 control-label">All Stylist</span>
+                                    </div>
+                                    <br/><br/>
+                                </div>
+                            </div>
+
                             <label id="availability_heading">
                                 Enter the booking details to see availability
                             </label>
                             <p id="availability_content">
 
                             </p>
+                        </div>
+
+                        <div class="">
+                            <button disabled id="create_booking" type="submit" class="col-md-12  btn btn-success">
+                                Place Booking
+                            </button>
                         </div>
                     </div>
                 </div>
@@ -323,17 +348,25 @@
                 check_availability();
             });
 
-            $('#datetimepicker1').datetimepicker({
-                format: 'YYYY-MM-DD H:mm:ss'
-            }).on('dp.change', function (event) {
-                check_availability();
+            new Pikaday(
+            {
+                field: document.getElementById('start_date'),
+                bound: false,
+                container: document.getElementById('date_container'),
+                onSelect: function(date) {
+                    var field = document.getElementById('start_date');
+                    field.value = date.getFullYear( )+'-'+(date.getMonth( )+1) +'-'+date.getDate( );
+                    check_availability();
+                }
+            });
+
+            $( "#start_time" ).timeDropper({
+                format: 'H:mm'
             });
         });
 
-
         jQuery(document).ready(function() {
             $(".chosen").chosen();
-            $(".select2").chosen();
         });
 
         $( ".chosen" ).change(function() {
@@ -362,7 +395,19 @@
 
         function check_availability() {
             var avail = 0;
-            if($('.select2').val() != null && $('#stylist').val() != "" && $('#start').val() != "") {
+            var services = '';
+            var i =1;
+            @foreach($services as $service)
+                if(document.getElementById("service_{{$service->id}}").checked) {
+                    if(i != 1) {
+                        services += ",";
+                    }
+                    services += "{{$service->id}}";
+                    i++;
+                }
+            @endforeach
+
+            if(services != "" && $('#stylist').val() != "" && $('#start_date').val() != "" && $('#start_time').val() != "") {
                 if ($('#customer').val() != "") {
                     avail = 1;
                 } else if($('#name').val() != "" && $('#email_address').val() != "" && $('#phone_number').val() != "" && $('#next_reminder').val() != "") {
@@ -386,7 +431,7 @@
                 document.getElementById("create_booking").disabled = true;
             } else {
                 $('#availability_heading').html(
-                        "Showing availability for the day : "+$('#start').val().slice(0,10)
+                        "Showing availability for the day : "+$('#start_date').val()
                 );
 
                 $('#availability_content').html('');
@@ -400,7 +445,7 @@
                     customer_id = $('#customer').val();
                 }
                 $.ajax({
-                    url: '/availability/'+$('#stylist').val()+'/'+customer_id+'/'+$('#start').val()+'/'+$('.select2').val(),
+                    url: '/availability/'+$('#stylist').val()+'/'+customer_id+'/'+$('#start_date').val()+' '+$('#start_time').val()+':00/'+services,
                     type: 'get',
                     dataType: 'json',
                     success: function(data) {
