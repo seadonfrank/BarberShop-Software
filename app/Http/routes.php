@@ -53,4 +53,6 @@ Route::get('events', 'BookingController@events');
 
 Route::get('availability/{user_id}/{customer_id}/{date_time}/{duration}', 'BookingController@availability');
 
+Route::get('stylist_availability/{date_time}/{user_id?}', 'BookingController@stylist_availability');
+
 Route::put('set_reminder/{customer_id}', 'CustomerController@set_reminder');

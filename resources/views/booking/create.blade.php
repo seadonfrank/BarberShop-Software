@@ -229,7 +229,7 @@
                         <div class="">
                             <div class="form-group{{ $errors->has('stylist') ? ' has-error' : '' }}">
                                 <label for="stylist" class="control-label">Stylist</label>
-                                <select id="stylist" onchange="check_availability()" class="form-control" name="stylist" value="{{ old('stylist') }}">
+                                <select id="stylist" onchange="$(function () { check_availability(); check_stylist_availability(); })" class="form-control" name="stylist" value="{{ old('stylist') }}">
                                     <option value="">Select a Stylist</option>
                                     @foreach($users as $user)
                                         <option value="{{$user->id}}">{{$user->name}}</option>
@@ -305,21 +305,16 @@
                             <div class="form-group">
                                 <label for="stylist_availability" class="control-label">Show Stylist Availability</label>
                                 <div class="col-md-12 row">
-                                    <br/>
-                                    <div class="col-md-6 row">
-                                        <input id="stylist_availability" type="radio" class="col-md-1 checkbox" name="stylist_availability">
-                                        <span class="col-md-10 control-label">This Stylist</span>
+                                    <div id="stylist_content">
+                                        <p>Select a stylist and a start date to see the stylist availability</p>
                                     </div>
-                                    <div class="col-md-6 row">
-                                        <input id="stylist_availability" type="radio" class="col-md-1 checkbox" name="stylist_availability">
-                                        <span class="col-md-10 control-label">All Stylist</span>
-                                    </div>
-                                    <br/><br/>
                                 </div>
                             </div>
 
+                            <hr/>
+
                             <label id="availability_heading">
-                                Enter the booking details to see availability
+                                Enter booking details to check the availability
                             </label>
                             <p id="availability_content">
 
@@ -357,6 +352,7 @@
                     var field = document.getElementById('start_date');
                     field.value = date.getFullYear( )+'-'+(date.getMonth( )+1) +'-'+date.getDate( );
                     check_availability();
+                    check_stylist_availability();
                 }
             });
 
@@ -421,7 +417,7 @@
 
             if(avail == 0){
                 $('#availability_heading').html(
-                        "Enter the booking details to see availability"
+                        "Enter booking details to check the availability"
                 );
 
                 $('#end').val("This field will be auto populated");
@@ -431,7 +427,7 @@
                 document.getElementById("create_booking").disabled = true;
             } else {
                 $('#availability_heading').html(
-                        "Showing availability for the day : "+$('#start_date').val()
+                        "Booking Confirmation for : "+$('#start_date').val()
                 );
 
                 $('#availability_content').html('');
@@ -453,7 +449,7 @@
 
                         document.getElementById("create_booking").disabled = !data.available;
 
-                        var bookings = '<hr/><div class="btn-group btn-group-xs" role="group">'
+                        /*var bookings = '<hr/><div class="btn-group btn-group-xs" role="group">'
                                 +'No bookings information found'
                                 +'</div>';
 
@@ -475,10 +471,64 @@
                                     +'</div>';
                         });
 
-                        $('#availability_content').html(bookings);
+                        $('#availability_content').html(bookings);*/
+
+                        if(data.available) {
+                            $('#availability_content').html('Available <i class="fa fa-check"></i>');
+                        } else {
+                            $('#availability_content').html('Not Available <i class="fa fa-close"></i>');
+                        }
                     }
                 });
             }
+        }
+
+        function check_stylist_availability() {
+            if($('#stylist').val() != "" && $('#start_date').val() != "") {
+                var content = '<div class="col-md-6 row">'
+                        +'<input id="stylist_availability" onclick="show_stylist_availability(1)" type="radio" class="col-md-1 checkbox" name="stylist_availability">'
+                        +'<span class="col-md-10 control-label">This Stylist</span>'
+                +'</div><div class="col-md-6 row pull-right">'
+                        +'<input id="stylist_availability" onclick="show_stylist_availability(0)" type="radio" class="col-md-1 checkbox" name="stylist_availability">'
+                        +'<span class="col-md-10 control-label">All Stylist</span>'
+                +'</div><br/>'
+                +'<br/><div id="stylist_availability_content" class="row"></div>';
+                $('#stylist_content').html(content);
+            } else {
+                $('#stylist_content').html('<p>Select a stylist and a start date to see the stylist availability</p>');
+            }
+        }
+
+        function show_stylist_availability(id) {
+            $('#stylist_availability_content').html('');
+
+            if(id) {
+                id="/"+document.getElementById('stylist').value;
+            } else {
+                id = "/";
+            }
+
+            $.ajax({
+                url: '/stylist_availability/'+$('#start_date').val()+' '+$('#start_time').val()+':00'+id,
+                type: 'get',
+                dataType: 'json',
+                success: function(data) {
+                    $.each( data, function( key1, value1 ) {
+                        $.each( value1, function( key2, value2 ) {
+                            if(key2 == "stylist_availabilities_format") {
+                                $.each( value2, function( key3, value3 ) {
+                                    var key = key3;
+                                    $.each( value3, function( key4, value4 ) {
+                                        $('#stylist_availability_content').append(
+                                                '<div class="col-md-6 pull-left"><a href="#">'+key+'</a></div><div class="col-md-6 row pull-right">'+value4+'</div>'
+                                        );
+                                    });
+                                });
+                            }
+                        });
+                    });
+                }
+            });
         }
     </script>
 @endsection

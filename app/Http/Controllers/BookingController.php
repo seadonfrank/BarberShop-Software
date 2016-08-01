@@ -466,4 +466,90 @@ class BookingController extends Controller
             'stylist_availabilities_all' => $temp_stylist_availabilities_all
         );
     }
+
+    public function stylist_availability($date_time, $user_id=0) {
+        $result = array();
+        if($user_id) {
+            $result[$user_id] = $this->stylist_availability_user($date_time, $user_id);
+        } else {
+            $users = DB::table('users')->select('id')->where('isadmin', '!=', 1)->get();
+            foreach($users as $user) {
+                $result[$user->id] = $this->stylist_availability_user($date_time, $user->id);
+            }
+        }
+        return $result;
+    }
+
+    public function stylist_availability_user($date_time, $user_id)
+    {
+        $date_time = new \DateTime($date_time);
+
+        $stylist_availabilities = null;
+        $stylist_availabilities = DB::table('booking_service')
+            ->join('bookings', 'bookings.id', '=', 'booking_service.booking_id')
+            ->join('services', 'services.id', '=', 'booking_service.service_id')
+            ->whereRaw('DATE(booking_service.start_date_time) = "'.date('Y-m-d', $date_time->getTimestamp()).'"')
+            ->where('bookings.user_id', '=', $user_id)
+            ->where('bookings.status', '=', "Finalised")
+            ->orderBy('booking_service.start_date_time')
+            ->get();
+
+        $raw_stylist_availabilities = array();
+        foreach($stylist_availabilities as $stylist_availability) {
+            $raw_stylist_availabilities[$stylist_availability->booking_id]['start_date_time'] = $stylist_availability->start_date_time;
+            $raw_stylist_availabilities[$stylist_availability->booking_id]['service_ids'][] = $stylist_availability->service_id;
+            $raw_stylist_availabilities[$stylist_availability->booking_id]['service_names'][] = $stylist_availability->name;
+            $raw_stylist_availabilities[$stylist_availability->booking_id]['service_costs'][] = $stylist_availability->cost;
+            $raw_stylist_availabilities[$stylist_availability->booking_id]['service_durations'][] = $stylist_availability->duration;
+            $raw_stylist_availabilities[$stylist_availability->booking_id]['customer'] = Customer::find($stylist_availability->customer_id);
+            $raw_stylist_availabilities[$stylist_availability->booking_id]['user'] = User::find($stylist_availability->user_id);;
+            $raw_stylist_availabilities[$stylist_availability->booking_id]['status'] = $stylist_availability->status;
+        }
+
+        $format_stylist_availabilities = array();
+        $start_date_time = $open_date_time = new \DateTime(date('Y-m-d', $date_time->getTimestamp())." 09:00:00");
+        $end_date_time = $close_date_time = new \DateTime(date('Y-m-d', $date_time->getTimestamp())." 18:00:00");
+
+        if(count($raw_stylist_availabilities) <= 0) {
+            $format_stylist_availabilities[User::find($user_id)->name][] =
+                date('H:i:s', $open_date_time->getTimestamp())." - ".date('H:i:s', $close_date_time->getTimestamp());
+        } else {
+            foreach($raw_stylist_availabilities as $raw_stylist_availability) {
+                $total_duration = "00:00:00";
+                foreach($raw_stylist_availability['service_durations'] as $duration) {
+                    $temp_time = array();
+                    $time1 = explode(':', $duration);
+                    $time2 = explode(':', $total_duration);
+                    $temp_time[0] = $time1[0] + $time2[0];
+                    $temp_time[1] = $time1[1] + $time2[1];
+                    $temp_time[2] = $time1[2] + $time2[2];
+                    $total_duration = implode(':', $temp_time);
+                }
+
+                $end_date_time = new \DateTime($raw_stylist_availability['start_date_time']);
+                $start_date_time = new \DateTime($raw_stylist_availability['start_date_time']);
+                $duration = explode(':', $total_duration);
+                $end_date_time->modify("+{$duration[0]} hours");
+                $end_date_time->modify("+{$duration[1]} minutes");
+                $end_date_time->modify("+{$duration[2]} seconds");
+
+                if($start_date_time > $open_date_time) {
+                    $format_stylist_availabilities[$raw_stylist_availability['user']['name']][] =
+                        date('H:i:s', $open_date_time->getTimestamp())." - ".date('H:i:s', $start_date_time->getTimestamp());
+                    $open_date_time = $end_date_time;
+                } else {
+                    $open_date_time = $end_date_time;
+                }
+            }
+            if($end_date_time < $close_date_time) {
+                $format_stylist_availabilities[$raw_stylist_availability['user']['name']][] =
+                    date('H:i:s', $end_date_time->getTimestamp())." - ".date('H:i:s', $close_date_time->getTimestamp());
+            }
+        }
+
+        return array(
+            'stylist_availabilities_raw' => $raw_stylist_availabilities,
+            'stylist_availabilities_format' => $format_stylist_availabilities,
+        );
+    }
 }
