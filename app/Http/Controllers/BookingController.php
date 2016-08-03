@@ -256,7 +256,7 @@ class BookingController extends Controller
         return array("response"=>true);
     }
 
-    public function getProcess()
+    public function process()
     {
         //
         $processes = DB::table('booking_service')
@@ -295,6 +295,42 @@ class BookingController extends Controller
         }
 
         return view('booking.process', ['processes' => $temp_processes, 'active' => 'process_booking']);
+    }
+
+    public function getProcess($id)
+    {
+        $processor = DB::table('booking_service')
+            ->select('bookings.customer_id', 'bookings.user_id', 'bookings.status', 'bookings.created_at',
+                'services.name','services.cost','services.duration',
+                'booking_service.start_date_time', 'booking_service.booking_id', 'booking_service.service_id')
+            ->join('bookings', 'bookings.id', '=', 'booking_service.booking_id')
+            ->join('services', 'services.id', '=', 'booking_service.service_id')
+            //->join('products', 'products.id', '=', 'booking_product.product_id')
+            ->whereRaw('DATE(booking_service.start_date_time) < "'.date("Y-m-d H:i:s").'"')
+            ->where('bookings.status', '=', "Finalised")
+            ->where('bookings.id', '=', $id)
+            ->get();
+
+        $temp_process = array();
+        foreach($processor as $process) {
+            $temp_process[$process->booking_id]['start_date_time'] = $process->start_date_time;
+            $temp_process[$process->booking_id]['start_date'] = date('D M j Y', strtotime($process->start_date_time));
+            $temp_process[$process->booking_id]['start_time'] = date('g:i a', strtotime($process->start_date_time));
+            $temp_process[$process->booking_id]['services'][$process->service_id]['name'] = $process->name;
+            $temp_process[$process->booking_id]['services'][$process->service_id]['cost'] = $process->cost;
+            $temp_process[$process->booking_id]['services'][$process->service_id]['duration'] = $process->duration;
+            $temp_process[$process->booking_id]['customer'] = Customer::find($process->customer_id);
+            $temp_process[$process->booking_id]['user'] = User::find($process->user_id);;
+            $temp_process[$process->booking_id]['status'] = $process->status;
+            $temp_process[$process->booking_id]['created_at'] = $process->created_at;
+        }
+
+        return view('booking.processor', [
+            'process' => $temp_process,
+            'products' => $products = DB::table('products')->get(),
+            'id' => $id,
+            'active' => 'process_booking'
+        ]);
     }
 
     public function postProcess($id)

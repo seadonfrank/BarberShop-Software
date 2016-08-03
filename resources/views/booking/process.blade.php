@@ -5,7 +5,7 @@
     <div class="row">
         <div class="col-md-12">
             <div class="col-md-12" >
-                <h2>Process Booking</h2>
+                <h2>Process Bookings</h2>
             </div>
             <table class="table">
                 <tr>
@@ -26,7 +26,7 @@
                         <td>{{$process['customer']['name']}}</td>
                         <td>{{$process['user']['name']}}</td>
                         <td>
-                            <a href="#" onclick="process({{$process['id']}})" class="btn-xs btn btn-success"><i class="fa fa-gears"></i> Process</a>
+                            <a href="/process/{{$process['id']}}" class="btn-xs btn btn-success"><i class="fa fa-gears"></i> Process</a>
                         </td>
                     </tr>
                 @endforeach
@@ -34,25 +34,4 @@
         </div>
     </div>
 </div>
-@endsection
-
-@section('script')
-    <script type="text/javascript">
-        function process(id){
-            if(confirm("Are you sure that you want to process this?")){
-                $.ajax({
-                    url: '/process/'+id,
-                    type: 'post',
-                    dataType: 'json',
-                    success: function(data) {
-                        if(data.response) {
-                            location.reload();
-                        } else {
-                            alert("Unable to process. Please try in some time.");
-                        }
-                    }
-                });
-            }
-        }
-    </script>
 @endsection

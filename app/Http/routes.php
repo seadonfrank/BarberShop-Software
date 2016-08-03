@@ -45,7 +45,9 @@ Route::resource('booking', 'BookingController');
 
 Route::post('booking/{id}/cancel', 'BookingController@cancel');
 
-Route::get('process', 'BookingController@getProcess');
+Route::get('process', 'BookingController@process');
+
+Route::get('process/{id}', 'BookingController@getProcess');
 
 Route::post('process/{id}', 'BookingController@postProcess');
 

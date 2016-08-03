@@ -76,7 +76,7 @@
                 </div>
             </div>
             <div class="modal-footer">
-                <a id="process_booking" class="btn btn-success"><i class="fa fa-gears"></i> Process Booking</a>
+                <a id="process_booking" href="#" class="btn btn-success"><i class="fa fa-gears"></i> Process Booking</a>
                 <a id="edit_booking" class="btn btn-warning"><i class="fa fa-pencil-square-o"></i> Edit Booking</a>
                 <a id="next_booking_button" href="/booking/create" class="btn btn-info"><i class="fa fa-file"></i> Book Next Appointment</a>
                 <button type="button" id="delete_booking" class="btn btn-danger" data-dismiss="modal"><i class="fa fa-trash-o"></i> Remove Booking</button>
@@ -173,6 +173,7 @@
                     $('#service_names').html(data.service_names.join(', '));
 
                     $('#set_reminder').attr('onclick', 'set_reminder('+data.customer.id+')');
+                    $('#process_booking').attr('href', '/process/'+id);
 
                     if(data.status == "Processed") {
                         $('#next_booking_button').show();
@@ -225,23 +226,6 @@
                     }
                 }
             });
-        }
-
-        function process_booking(id){
-            if(confirm("Are you sure that you want to process this?")){
-                $.ajax({
-                    url: '/process/'+id,
-                    type: 'post',
-                    dataType: 'json',
-                    success: function(data) {
-                        if(data.response) {
-                            location.reload();
-                        } else {
-                            alert("Unable to process. Please try in some time.");
-                        }
-                    }
-                });
-            }
         }
     </script>
 @endsection
