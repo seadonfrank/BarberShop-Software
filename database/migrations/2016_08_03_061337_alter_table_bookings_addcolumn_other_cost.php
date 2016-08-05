@@ -15,7 +15,8 @@ class AlterTableBookingsAddcolumnOtherCost extends Migration
         //
         Schema::table('bookings', function(Blueprint $table)
         {
-            $table->boolean('other_cost');
+            $table->decimal('other_cost');
+            $table->string('other_service');
         });
     }
 
@@ -30,6 +31,7 @@ class AlterTableBookingsAddcolumnOtherCost extends Migration
         Schema::table('bookings', function(Blueprint $table)
         {
             $table->dropColumn('other_cost');
+            $table->dropColumn('other_service');
         });
     }
 }

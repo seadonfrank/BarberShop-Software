@@ -16,7 +16,7 @@
                         </div>
                         <div class="panel-body">
                             <div class="col-md-12">
-                                <div class="form-group{{ $errors->has('customer') ? ' has-error' : '' }}">
+                                <div class="form-group">
                                     <p><label>Booking Date : </label> {{$process[$id]['start_date']}}</p>
                                     <p><label>Booking Time : </label> {{$process[$id]['start_time']}}</p>
                                     <p><label>Stylist Name : </label> {{$process[$id]['user']->name}}</p>
@@ -24,23 +24,25 @@
                                 </div>
                             </div>
 
-                            <div class="col-md-12">
-                                <p><label>Customer Details</label></p>
-                            </div>
+                            <hr/>
 
                             <div class="col-md-12">
+                                <p><label>Customer Details</label></p>
+
+                                <input id="customer_id" type="hidden" class="form-control" name="customer_id" value="{{$process[$id]['customer']->id}}">
+
                                 <div class="form-group{{ $errors->has('name') ? ' has-error' : '' }}">
                                     <input placeholder="Name" id="name" type="text" class="form-control" name="name" value="{{$process[$id]['customer']->name}}">
 
                                     @if ($errors->has('name'))
                                         <span class="help-block">
-                                        <strong>{{ $errors->first('name') }}</strong>
-                                    </span>
+                                            <strong>{{ $errors->first('name') }}</strong>
+                                        </span>
                                     @endif
                                 </div>
 
                                 <div class="form-group{{ $errors->has('email_address') ? ' has-error' : '' }}">
-                                    <input placeholder="EmailAdress" disabled id="email_address" type="text" class="form-control" name="email_address" value="{{$process[$id]['customer']->email_address}}">
+                                    <input disabled placeholder="EmailAdress" id="email_address" type="text" class="form-control" name="email_address" value="{{$process[$id]['customer']->email_address}}">
 
                                     @if ($errors->has('email_address'))
                                         <span class="help-block">
@@ -54,8 +56,8 @@
 
                                     @if ($errors->has('phone_number'))
                                         <span class="help-block">
-                                        <strong>{{ $errors->first('phone_number') }}</strong>
-                                    </span>
+                                            <strong>{{ $errors->first('phone_number') }}</strong>
+                                        </span>
                                     @endif
                                 </div>
 
@@ -65,8 +67,8 @@
 
                                         @if ($errors->has('send_reminders'))
                                             <span class="help-block">
-                                            <strong>{{ $errors->first('send_reminders') }}</strong>
-                                        </span>
+                                                <strong>{{ $errors->first('send_reminders') }}</strong>
+                                            </span>
                                         @endif
                                     </div>
                                     <span class="col-md-10 control-label">SendReminders</span>
@@ -85,8 +87,8 @@
 
                                         @if ($errors->has('is_student'))
                                             <span class="help-block">
-                                            <strong>{{ $errors->first('is_student') }}</strong>
-                                        </span>
+                                                <strong>{{ $errors->first('is_student') }}</strong>
+                                            </span>
                                         @endif
                                     </div>
                                 </div>
@@ -104,8 +106,8 @@
 
                                         @if ($errors->has('is_child'))
                                             <span class="help-block">
-                                            <strong>{{ $errors->first('is_child') }}</strong>
-                                        </span>
+                                                <strong>{{ $errors->first('is_child') }}</strong>
+                                            </span>
                                         @endif
                                     </div>
                                 </div>
@@ -123,8 +125,8 @@
 
                                         @if ($errors->has('is_military'))
                                             <span class="help-block">
-                                            <strong>{{ $errors->first('is_military') }}</strong>
-                                        </span>
+                                                <strong>{{ $errors->first('is_military') }}</strong>
+                                            </span>
                                         @endif
                                     </div>
                                 </div>
@@ -142,8 +144,8 @@
 
                                         @if ($errors->has('is_beard'))
                                             <span class="help-block">
-                                            <strong>{{ $errors->first('is_beard') }}</strong>
-                                        </span>
+                                                <strong>{{ $errors->first('is_beard') }}</strong>
+                                            </span>
                                         @endif
                                     </div>
                                 </div>
@@ -171,8 +173,8 @@
 
                                         @if ($errors->has('next_reminder'))
                                             <span class="help-block">
-                                            <strong>{{ $errors->first('next_reminder') }}</strong>
-                                        </span>
+                                                <strong>{{ $errors->first('next_reminder') }}</strong>
+                                            </span>
                                         @endif
                                     </div>
                                 </div>
@@ -182,49 +184,51 @@
                 </div>
 
                 <div class="col-md-8">
-                    <div class="panel panel-default">
+                    <div class="panel panel-info">
                         <div class="panel-heading">
                             <h3 class="panel-title">Services & Products</h3>
                         </div>
                         <div class="panel-body">
                             <div class="">
+                                <input id="start_date_time" type="hidden" class="form-control" name="start_date_time" value="{{$process[$id]['start_date_time']}}">
+
                                 <div class="form-group">
-                                    <label for="stylist_availability" class="control-label">Services</label>
+                                    <label for="services" class="control-label">Services</label>
                                     <div class="col-md-12 row">
                                         @foreach($process[$id]['services'] as $key => $value)
                                             <div class="col-md-9">
-                                                <input id="service-{{$key}}" type="checkbox" name="service-{{$key}}" checked>
+                                                <input id="service[{{$key}}][checked]" type="checkbox" name="service[{{$key}}][checked]" checked>
                                                 <span class="control-label">{{$value['name']}} (Duration: {{$value['duration']}})</span>
                                             </div>
                                             <div class="col-md-1">
                                                 <h5>&pound</h5>
                                             </div>
                                             <div class="col-md-2">
-                                                <input id="service-cost-{{$key}}" name="service-cost-{{$key}}" type="text" class="form-control" value="{{$value['cost']}}">
+                                                <input onkeypress="retotal(-this.value)" onkeyup="retotal(this.value)" id="service[{{$key}}][actual_cost]" name="service[{{$key}}][actual_cost]" type="text" class="form-control" value="{{$value['cost']}}">
                                             </div>
                                         @endforeach
                                         <br/><br/><br/>
                                         <div class="col-md-9">
-                                            <input id="service-0" type="checkbox" name="service-0" checked>
+                                            <input id="other_checked" type="checkbox" name="other_checked">
                                             <span class="control-label">Other Services</span>
-                                            <input id="service-name-0" name="service-name-0" type="text" class="form-control">
+                                            <input id="other_service" name="other_service" type="text" class="form-control">
                                         </div>
                                         <div class="col-md-1">
                                             <h5>&pound</h5>
                                         </div>
                                         <div class="col-md-2">
-                                            <input id="service-cost-0" name="service-cost-0" type="text" class="form-control" value="0:00">
+                                            <input onkeypress="retotal(-this.value)" onkeyup="retotal(this.value)" id="other_cost" name="other_cost" type="text" class="form-control">
                                         </div>
                                     </div>
                                 </div>
 
                                 <div class="form-group">
-                                    <label for="stylist_availability" class="control-label">Products</label>
+                                    <label for="products" class="control-label">Products</label>
                                     <div class="col-md-12 row">
                                         <div class="col-md-6">
                                             <select id="products" class="form-control" name="products">
                                                 @foreach($products as $product)
-                                                    <option value="{{$product->id}}">{{$product->name}}</option>
+                                                    <option name="{{$product->name}}" value="{{$product->id}}">{{$product->name}} (&pound {{$product->cost}})</option>
                                                 @endforeach
                                             </select>
                                         </div>
@@ -235,8 +239,12 @@
                                                 <span style="cursor: pointer" onclick="product_quantity('inc')"><i class="fa fa-plus-circle"></i></span>
                                             </h5>
                                         </div>
-                                        <div class="col-md-4">
-                                            <button class="btn btn-sm btn-primary">Add Product</button>
+                                        <div class="col-md-2">
+                                            <span onclick="add_product()" class="btn btn-sm btn-primary">Add Product</span>
+                                        </div>
+                                        <br/><br/><br/>
+                                        <div id="products_container">
+
                                         </div>
                                     </div>
                                 </div>
@@ -245,12 +253,12 @@
 
                                 <label class="col-md-12">
                                     <div class="col-md-10">Total</div>
-                                    <div class="col-md-2 pull-right">&pound<span id="total"></span></div>
+                                    <div class="col-md-2 pull-right">&pound  <span id="total">0.00</span></div>
                                 </label>
                             </div>
 
                             <div class="">
-                                <button disabled id="create_booking" type="submit" class="col-md-12  btn btn-success">
+                                <button id="create_booking" type="submit" class="col-md-12  btn btn-success">
                                     Process Booking
                                 </button>
                             </div>
@@ -264,22 +272,11 @@
 
 @section('script')
     <script type="text/javascript">
-        function process(id){
-            if(confirm("Are you sure that you want to process this?")){
-                $.ajax({
-                    url: '/process/'+id,
-                    type: 'post',
-                    dataType: 'json',
-                    success: function(data) {
-                        if(data.response) {
-                            location.reload();
-                        } else {
-                            alert("Unable to process. Please try in some time.");
-                        }
-                    }
-                });
-            }
-        }
+        $(function (){
+            @foreach($process[$id]['services'] as $key => $value)
+                 retotal({{$value['cost']}});
+            @endforeach
+        });
 
         function product_quantity(type) {
             var value = $('#product_quantity').html();
@@ -290,6 +287,46 @@
                     document.getElementById('product_quantity').innerHTML = parseInt(value)-1;
                 else
                     alert('You may not have less than 1 product');
+            }
+        }
+
+        function retotal(cost) {
+            if(!isNaN(cost) && cost != '') {
+                cost = parseFloat($('#total').html(),2)+parseFloat(cost,2);
+                $('#total').html(cost);
+            }
+        }
+
+        function remove_product(id) {
+            $("#product_"+id).html('');
+        }
+
+        var products = [];
+        function add_product() {
+            if(products.indexOf($('#products').val()) == -1) {
+                products.push($('#products').val());
+                console.log(products);
+                $.ajax({
+                    url: '/product/'+$('#products').val(),
+                    type: 'get',
+                    dataType: 'json',
+                    success: function(data) {
+                        var cost = parseInt($('#product_quantity').html())*data.cost;
+                        var content = '<div id="product_'+data.id+'"><div class="col-md-9">'
+                                +'<span style="cursor:pointer" onclick="(remove_product('+data.id+'))"><i class="fa fa-close"></i></span>&nbsp;&nbsp;<span class="control-label">'+data.name+' ('+$('#product_quantity').html()+')</span>'
+                                +'</div>'
+                                +'<div class="col-md-1">'
+                                +'<h5>&pound</h5></div><div class="col-md-2">'
+                                +'<input type="hidden" name="product['+data.id+'][quantity]" id="product['+data.id+'][quantity]" value="'+$('#product_quantity').html()+'">'
+                                +'<input onkeypress="retotal(-this.value)" onkeyup="retotal(this.value)" name="product['+data.id+'][actual_cost]" id="product['+data.id+'][actual_cost]" type="text" class="form-control" value="'+cost+'">'
+                                +'</div></div>';
+                        $('#products_container').append(content);
+
+                        retotal(cost);
+                    }
+                });
+            } else {
+                alert('This product is already been added');
             }
         }
     </script>

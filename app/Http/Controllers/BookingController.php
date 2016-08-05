@@ -325,6 +325,10 @@ class BookingController extends Controller
             $temp_process[$process->booking_id]['created_at'] = $process->created_at;
         }
 
+        if(count($temp_process) <= 0) {
+            return "It Seams like this booking is not available or that its already been processed.";
+        }
+
         return view('booking.processor', [
             'process' => $temp_process,
             'products' => $products = DB::table('products')->get(),
@@ -333,12 +337,61 @@ class BookingController extends Controller
         ]);
     }
 
-    public function postProcess($id)
+    public function postProcess(Request $request, $id)
     {
+        $this->validate($request, [
+            'name' => 'required|max:255',
+            //'email_address' => 'required|email|max:255|unique:customers',
+            'phone_number' => 'required|max:255',
+        ]);
+        $reminder = $request->get('send_reminders');
+        if(isset($reminder))
+            $reminder = 1;
+        else
+            $reminder = 0;
+        $next_reminder = date("Y-m-d");
+        $days = (int)$request->get('next_reminder')*7;
+        $next_reminder = date('Y-m-d', strtotime($next_reminder. ' + '.$days.' days'));
+        DB::table('customers')
+            ->where('id', $request->get('customer_id'))
+            ->update([
+                'name' => $request->get('name'),
+                //'email_address' => $request->get('email_address'),
+                'phone_number' => $request->get('phone_number'),
+                'send_reminders' => $reminder,
+                'is_student' => $request->get('is_student'),
+                'is_child' => $request->get('is_child'),
+                'is_military' => $request->get('is_military'),
+                'is_beard' => $request->get('is_beard'),
+                'next_reminder' =>  date("Y-m-d H:i:s", strtotime($next_reminder)),
+            ]);
+
+
         $booking = Booking::find($id);
         $booking->status = "Processed";
+        if($request->get('other_checked')){
+            $booking->other_service = $request->get('other_service');
+            $booking->other_cost = $request->get('other_cost');
+        }
         $booking->save();
-        return array("response"=>true);
+
+        $booking->products()->detach();
+        if(count($request->get('product')) > 0) {
+            foreach($request->get('product') as $key => $value) {
+                $booking->products()->attach($key, array('quantity'=>$value['quantity'], 'actual_cost'=>$value['actual_cost']));
+            }
+        }
+
+        $booking->services()->detach();
+        if(count($request->get('service')) > 0){
+            foreach($request->get('service') as $key => $value) {
+                if($value['checked'])
+                    $booking->services()->attach($key, array('start_date_time'=>$request->get('start_date_time'), 'actual_cost'=>$value['actual_cost']));
+            }
+
+        }
+
+        return redirect('booking');
     }
 
     public function events(request $request)

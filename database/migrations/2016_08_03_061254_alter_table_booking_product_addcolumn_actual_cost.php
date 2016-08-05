@@ -15,7 +15,7 @@ class AlterTableBookingProductAddcolumnActualCost extends Migration
         //
         Schema::table('booking_product', function(Blueprint $table)
         {
-            $table->boolean('actual_cost');
+            $table->decimal('actual_cost');
         });
     }
 
