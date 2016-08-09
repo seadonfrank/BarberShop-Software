@@ -159,7 +159,8 @@
                 type: 'get',
                 dataType: 'json',
                 success: function(data) {
-                    $('#title').html("Booking Summary - "+data.start_date_time.slice(0,10));
+                    var start_date = data.start_date_time.slice(0,10).split('-');
+                    $('#title').html("Booking Summary - "+start_date[2] +'/'+ start_date[1] +'/'+ start_date[0]);
                     $('#user').html(data.user.name);
                     $('#customer').html(data.customer.name);
                     $('#start').html(data.start_date_time.slice(11,19));
