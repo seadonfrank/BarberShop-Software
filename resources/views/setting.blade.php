@@ -16,11 +16,11 @@
                             </td>
                             <td>
                                 <h3></h3><br/>
-                                <input id="{{$setting->id}}" class="col-md-2" type="{{$setting->type}}" value="{{$setting->value}}">
+                                <input id="{{$setting->id}}" class="col-md-4" type="{{$setting->type}}" @if($setting->type=='checkbox' && $setting->value=='1') checked @endif value="{{$setting->value}}">
                             </td>
                             <td>
                                 <h3></h3><br/>
-                                <button onclick="save({{$setting->id}})" class="btn btn-success">Save</button>
+                                <button onclick="save('{{$setting->id}}', '{{$setting->type}}')" class="btn btn-success">Save</button>
                             </td>
                         </tr>
                     @endforeach
@@ -39,12 +39,18 @@
 
 @section('script')
     <script type="text/javascript">
-        function save(id){
+        function save(id, type){
+            var value = "";
+            if(type == "checkbox"){
+                value = document.getElementById(id).checked?"1":"0"
+            } else{
+                value = document.getElementById(id).value
+            }
             $.ajax({
                 url: '/setting/'+id,
                 type: 'post',
                 dataType: 'json',
-                data: 'data='+document.getElementById(id).value,
+                data: 'data='+value,
                 success: function(data) {
                     if(data.response) {
                         location.reload();

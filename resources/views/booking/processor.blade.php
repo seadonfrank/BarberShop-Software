@@ -71,13 +71,13 @@
                                             </span>
                                         @endif
                                     </div>
-                                    <span class="col-md-10 control-label">SendReminders</span>
+                                    <label style="font-weight: normal !important;" for="send_reminders" class="col-md-10 control-label">SendReminders</label>
                                 </div>
 
                                 <br/><br/>
 
                                 <div class="form-group{{ $errors->has('is_student') ? ' has-error' : '' }}">
-                                    <span class="col-md-4 control-label">IsStudent</span>
+                                    <span class="col-md-4 control-label">Student</span>
 
                                     <div class="col-md-8">
                                         <select id="is_student" class="form-control" name="is_student" value="{{ old('is_student') }}">
@@ -96,7 +96,7 @@
                                 <br/><br/>
 
                                 <div class="form-group{{ $errors->has('is_child') ? ' has-error' : '' }}">
-                                    <span class="col-md-4 control-label">IsChild</span>
+                                    <span class="col-md-4 control-label">Child</span>
 
                                     <div class="col-md-8">
                                         <select id="is_child" class="form-control" name="is_child" value="{{ old('is_child') }}">
@@ -115,7 +115,7 @@
                                 <br/><br/>
 
                                 <div class="form-group{{ $errors->has('is_military') ? ' has-error' : '' }}">
-                                    <span class="col-md-4 control-label">IsMilitary</span>
+                                    <span class="col-md-4 control-label">Military</span>
 
                                     <div class="col-md-8">
                                         <select id="is_military" class="form-control" name="is_military" value="{{ old('is_military') }}">
@@ -134,7 +134,7 @@
                                 <br/><br/>
 
                                 <div class="form-group{{ $errors->has('is_beard') ? ' has-error' : '' }}">
-                                    <span class="col-md-4 control-label">HasBeard</span>
+                                    <span class="col-md-4 control-label">Beard</span>
 
                                     <div class="col-md-8">
                                         <select id="is_beard" class="form-control" name="is_beard" value="{{ old('is_beard') }}">
@@ -198,7 +198,7 @@
                                         @foreach($process[$id]['services'] as $key => $value)
                                             <div class="col-md-9">
                                                 <input id="service[{{$key}}][checked]" type="checkbox" name="service[{{$key}}][checked]" checked>
-                                                <span class="control-label">{{$value['name']}} (Duration: {{$value['duration']}})</span>
+                                                <label style="font-weight: normal !important;" for="service[{{$key}}][checked]" class="control-label">{{$value['name']}} (Duration: {{$value['duration']}})</label>
                                             </div>
                                             <div class="col-md-1">
                                                 <h5>&pound</h5>
@@ -210,7 +210,7 @@
                                         <br/><br/><br/>
                                         <div class="col-md-9">
                                             <input id="other_checked" type="checkbox" name="other_checked">
-                                            <span class="control-label">Other Services</span>
+                                            <label style="font-weight: normal !important;" for="other_checked" class="control-label">Other Services</label>
                                             <input id="other_service" name="other_service" type="text" class="form-control">
                                         </div>
                                         <div class="col-md-1">

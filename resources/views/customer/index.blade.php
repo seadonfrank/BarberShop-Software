@@ -16,10 +16,10 @@
                     <th>EmailAddress</th>
                     <th>PhoneNumbers</th>
                     <th>SendReminders</th>
-                    <th>IsStudent</th>
-                    <th>IsChild</th>
-                    <th>IsMilitary</th>
-                    <th>hasBeard</th>
+                    <th>Student</th>
+                    <th>Child</th>
+                    <th>Military</th>
+                    <th>Beard</th>
                     <th>NextReminder</th>
                     <th></th>
                 </tr>
@@ -105,19 +105,19 @@
                             <p class="col-md-8" id="send_reminders"></p>
                         </div>
                         <div class="col-md-12">
-                            <label for="is_student" class="col-md-4 control-label">IsStudent:</label>
+                            <label for="is_student" class="col-md-4 control-label">Student:</label>
                             <p class="col-md-8" id="is_student"></p>
                         </div>
                         <div class="col-md-12">
-                            <label for="is_child" class="col-md-4 control-label">IsChild:</label>
+                            <label for="is_child" class="col-md-4 control-label">Child:</label>
                             <p class="col-md-8" id="is_child"></p>
                         </div>
                         <div class="col-md-12">
-                            <label for="is_military" class="col-md-4 control-label">IsMilitary:</label>
+                            <label for="is_military" class="col-md-4 control-label">Military:</label>
                             <p class="col-md-8" id="is_military"></p>
                         </div>
                         <div class="col-md-12">
-                            <label for="is_beard" class="col-md-4 control-label">HasBeard:</label>
+                            <label for="is_beard" class="col-md-4 control-label">Beard:</label>
                             <p class="col-md-8" id="is_beard"></p>
                         </div>
                         <div class="col-md-12">

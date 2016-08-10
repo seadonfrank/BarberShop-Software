@@ -58,7 +58,7 @@
                     <label for="send_reminders" class="col-md-3 control-label">SendReminders</label>
 
                     <div class="col-md-1">
-                        <input id="send_reminders" type="checkbox" class="checkbox" name="send_reminders" value="{{ old('send_reminders') }}">
+                        <input id="send_reminders" type="checkbox" class="checkbox" name="send_reminders" @if(old('send_reminders') == true) checked @endif>
 
                         @if ($errors->has('send_reminders'))
                             <span class="help-block">
@@ -69,12 +69,12 @@
                 </div>
 
                 <div class="form-group{{ $errors->has('is_student') ? ' has-error' : '' }}">
-                    <label for="is_student" class="col-md-3 control-label">IsStudent</label>
+                    <label for="is_student" class="col-md-3 control-label">Student</label>
 
                     <div class="col-md-1">
-                        <select id="is_student" class="form-control" name="is_student" value="{{ old('is_student') }}">
-                            <option value="1">True</option>
-                            <option value="0">False</option>
+                        <select id="is_student" class="form-control" name="is_student">
+                            <option @if(old('is_student') == "1") selected @endif value="1">True</option>
+                            <option @if(old('is_student') == "0") selected @endif value="0">False</option>
                         </select>
 
                         @if ($errors->has('is_student'))
@@ -86,12 +86,12 @@
                 </div>
 
                 <div class="form-group{{ $errors->has('is_child') ? ' has-error' : '' }}">
-                    <label for="is_child" class="col-md-3 control-label">IsChild</label>
+                    <label for="is_child" class="col-md-3 control-label">Child</label>
 
                     <div class="col-md-1">
-                        <select id="is_child" class="form-control" name="is_child" value="{{ old('is_child') }}">
-                            <option value="1">True</option>
-                            <option value="0">False</option>
+                        <select id="is_child" class="form-control" name="is_child">
+                            <option @if(old('is_child') == "1") selected @endif value="1">True</option>
+                            <option @if(old('is_child') == "0") selected @endif value="0">False</option>
                         </select>
 
                         @if ($errors->has('is_child'))
@@ -103,12 +103,12 @@
                 </div>
 
                 <div class="form-group{{ $errors->has('is_military') ? ' has-error' : '' }}">
-                    <label for="is_military" class="col-md-3 control-label">IsMilitary</label>
+                    <label for="is_military" class="col-md-3 control-label">Military</label>
 
                     <div class="col-md-1">
-                        <select id="is_military" class="form-control" name="is_military" value="{{ old('is_military') }}">
-                            <option value="1">True</option>
-                            <option value="0">False</option>
+                        <select id="is_military" class="form-control" name="is_military">
+                            <option @if(old('is_military') == "1") selected @endif value="1">True</option>
+                            <option @if(old('is_military') == "0") selected @endif value="0">False</option>
                         </select>
 
                         @if ($errors->has('is_military'))
@@ -120,12 +120,12 @@
                 </div>
 
                 <div class="form-group{{ $errors->has('is_beard') ? ' has-error' : '' }}">
-                    <label for="is_beard" class="col-md-3 control-label">HasBeard</label>
+                    <label for="is_beard" class="col-md-3 control-label">Beard</label>
 
                     <div class="col-md-1">
-                        <select id="is_beard" class="form-control" name="is_beard" value="{{ old('is_beard') }}">
-                            <option value="1">True</option>
-                            <option value="0">False</option>
+                        <select id="is_beard" class="form-control" name="is_beard">
+                            <option @if(old('is_beard') == "1") selected @endif value="1">True</option>
+                            <option @if(old('is_beard') == "0") selected @endif value="0">False</option>
                         </select>
 
                         @if ($errors->has('is_beard'))

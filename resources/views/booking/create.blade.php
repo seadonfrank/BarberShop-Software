@@ -1,5 +1,13 @@
 @extends('layouts.app')
 
+@section('style')
+    <style type="text/css">
+        #customer_chosen {
+            width:100% !important;
+        }
+    </style>
+@endsection
+
 @section('content')
 <div class="container">
     <div class="row">
@@ -17,17 +25,17 @@
                     <div class="panel-body">
                         <div class="col-md-12">
                             <div class="form-group{{ $errors->has('customer') ? ' has-error' : '' }}">
-                                <select id="customer" onchange="check_availability()" class="chosen form-control" name="customer" value="{{ old('customer') }}">
+                                <select id="customer" onchange="check_availability()" style="width:100% !important;" class="col-md-12 chosen form-control" name="customer">
                                     <option value="">Select Existing Customer</option>
                                     @foreach($customers as $customer)
-                                        <option value="{{$customer->id}}">{{$customer->name}}</option>
+                                        <option @if(old('customer') == $customer->id) selected @endif value="{{$customer->id}}">{{$customer->name}}</option>
                                     @endforeach
                                 </select>
 
                                 @if ($errors->has('customer'))
                                     <span class="help-block">
-                                    <strong>{{ $errors->first('customer') }}</strong>
-                                </span>
+                                        <strong>{{ $errors->first('customer') }}</strong>
+                                    </span>
                                 @endif
                             </div>
                         </div>
@@ -108,7 +116,7 @@
 
                             <div class="form-group{{ $errors->has('send_reminders') ? ' has-error' : '' }}">
                                 <div class="col-md-2">
-                                    <input id="send_reminders" type="checkbox" class="checkbox" name="send_reminders" value="{{ old('send_reminders') }}">
+                                    <input id="send_reminders" type="checkbox" class="checkbox" name="send_reminders" @if(old('send_reminders') == true) checked @endif>
 
                                     @if ($errors->has('send_reminders'))
                                         <span class="help-block">
@@ -116,18 +124,18 @@
                                         </span>
                                     @endif
                                 </div>
-                                <span class="col-md-10 control-label">SendReminders</span>
+                                <label style="font-weight: normal !important;" for="send_reminders" class="col-md-10 control-label">SendReminders</label>
                             </div>
 
                             <br/><br/>
 
                             <div class="form-group{{ $errors->has('is_student') ? ' has-error' : '' }}">
-                                <span class="col-md-4 control-label">IsStudent</span>
+                                <span class="col-md-4 control-label">Student</span>
 
                                 <div class="col-md-8">
-                                    <select id="is_student" class="form-control" name="is_student" value="{{ old('is_student') }}">
-                                        <option value="1">True</option>
-                                        <option value="0">False</option>
+                                    <select id="is_student" class="form-control" name="is_student">
+                                        <option @if(old('is_student') == "1") selected @endif value="1">True</option>
+                                        <option @if(old('is_student') == "0") selected @endif value="0">False</option>
                                     </select>
 
                                     @if ($errors->has('is_student'))
@@ -141,12 +149,12 @@
                             <br/><br/>
 
                             <div class="form-group{{ $errors->has('is_child') ? ' has-error' : '' }}">
-                                <span class="col-md-4 control-label">IsChild</span>
+                                <span class="col-md-4 control-label">Child</span>
 
                                 <div class="col-md-8">
-                                    <select id="is_child" class="form-control" name="is_child" value="{{ old('is_child') }}">
-                                        <option value="1">True</option>
-                                        <option value="0">False</option>
+                                    <select id="is_child" class="form-control" name="is_child">
+                                        <option @if(old('is_child') == "1") selected @endif value="1">True</option>
+                                        <option @if(old('is_child') == "0") selected @endif value="0">False</option>
                                     </select>
 
                                     @if ($errors->has('is_child'))
@@ -160,12 +168,12 @@
                             <br/><br/>
 
                             <div class="form-group{{ $errors->has('is_military') ? ' has-error' : '' }}">
-                                <span class="col-md-4 control-label">IsMilitary</span>
+                                <span class="col-md-4 control-label">Military</span>
 
                                 <div class="col-md-8">
-                                    <select id="is_military" class="form-control" name="is_military" value="{{ old('is_military') }}">
-                                        <option value="1">True</option>
-                                        <option value="0">False</option>
+                                    <select id="is_military" class="form-control" name="is_military">
+                                        <option @if(old('is_military') == "1") selected @endif value="1">True</option>
+                                        <option @if(old('is_military') == "0") selected @endif value="0">False</option>
                                     </select>
 
                                     @if ($errors->has('is_military'))
@@ -179,12 +187,12 @@
                             <br/><br/>
 
                             <div class="form-group{{ $errors->has('is_beard') ? ' has-error' : '' }}">
-                                <span class="col-md-4 control-label">HasBeard</span>
+                                <span class="col-md-4 control-label">Beard</span>
 
                                 <div class="col-md-8">
-                                    <select id="is_beard" class="form-control" name="is_beard" value="{{ old('is_beard') }}">
-                                        <option value="1">True</option>
-                                        <option value="0">False</option>
+                                    <select id="is_beard" class="form-control" name="is_beard">
+                                        <option @if(old('is_beard') == "1") selected @endif value="1">True</option>
+                                        <option @if(old('is_beard') == "0") selected @endif value="0">False</option>
                                     </select>
 
                                     @if ($errors->has('is_beard'))
@@ -202,7 +210,7 @@
 
                                 <div class="col-md-8">
                                     <div class='input-group date' id='datetimepicker'>
-                                        <input placeholder="2016-12-20 17:16:18" name="next_reminder" id="next_reminder" type='text' class="form-control" />
+                                        <input placeholder="2016-12-20 17:16:18" name="next_reminder" id="next_reminder" type='text' class="form-control" value="{{ old('next_reminder') }}"/>
                                         <span class="input-group-addon">
                                             <span class="glyphicon glyphicon-calendar"></span>
                                         </span>
@@ -229,10 +237,10 @@
                         <div class="">
                             <div class="form-group{{ $errors->has('stylist') ? ' has-error' : '' }}">
                                 <label for="stylist" class="control-label">Stylist</label>
-                                <select id="stylist" onchange="$(function () { check_availability(); check_stylist_availability(); })" class="form-control" name="stylist" value="{{ old('stylist') }}">
+                                <select id="stylist" onchange="$(function () { check_availability(); check_stylist_availability(); })" class="form-control" name="stylist">
                                     <option value="">Select a Stylist</option>
                                     @foreach($users as $user)
-                                        <option value="{{$user->id}}">{{$user->name}}</option>
+                                        <option @if(old('stylist') == $user->id) selected @endif value="{{$user->id}}">{{$user->name}}</option>
                                     @endforeach
                                 </select>
 
@@ -248,8 +256,8 @@
                                 <div class="col-md-12">
                                     @foreach($services as $service)
                                         <div class="col-md-6">
-                                            <input id="service_{{$service->id}}" onclick="check_availability()" type="checkbox" class="col-md-2 checkbox" name="service_{{$service->id}}">
-                                            <span class="col-md-10 control-label">{{$service->name}}</span>
+                                            <input id="service_{{$service->id}}" onclick="check_availability()" type="checkbox" class="col-md-2 checkbox" name="service_{{$service->id}}" @if(old('service_'.$service->id) == true) checked @endif>
+                                            <label style="font-weight: normal !important;" for="service_{{$service->id}}" class="col-md-10 control-label">{{$service->name}}</label>
                                         </div>
                                     @endforeach
                                     <br/><br/>
@@ -265,24 +273,24 @@
                             <div class="form-group{{ $errors->has('start_date') ? ' has-error' : '' }}">
                                 <label for="start_date" class="control-label">Start Date</label>
                                 <input name="start_date" id="start_date" type='hidden' class="form-control" />
-                                <div class="col-md-12" id="date_container">
+                                <div id="date_container">
                                 </div>
 
                                 @if ($errors->has('start_date'))
                                     <span class="help-block">
-                                    <strong>{{ $errors->first('start_date') }}</strong>
-                                </span>
+                                        <strong>{{ $errors->first('start_date') }}</strong>
+                                    </span>
                                 @endif
                             </div>
 
                             <div class="form-group{{ $errors->has('start_time') ? ' has-error' : '' }}">
                                 <label for="start_time" class="control-label">Start Time</label>
-                                <input name="start_time" id="start_time" type='text' class="form-control" />
+                                <input name="start_time" id="start_time" type='text' class="form-control" value="{{ old('start_time') }}"/>
 
                                 @if ($errors->has('start_time'))
                                     <span class="help-block">
-                                    <strong>{{ $errors->first('start_time') }}</strong>
-                                </span>
+                                        <strong>{{ $errors->first('start_time') }}</strong>
+                                    </span>
                                 @endif
                             </div>
 
@@ -304,7 +312,7 @@
                         <div class="">
                             <div class="form-group">
                                 <label for="stylist_availability" class="control-label">Show Stylist Availability</label>
-                                <div class="col-md-12 row">
+                                <div class="col-md-24">
                                     <div id="stylist_content">
                                         <p>Select a stylist and a start date to see the stylist availability</p>
                                     </div>
@@ -343,7 +351,7 @@
                 check_availability();
             });
 
-            new Pikaday(
+            var pickaday = new Pikaday(
             {
                 field: document.getElementById('start_date'),
                 bound: false,
@@ -359,10 +367,14 @@
             $( "#start_time" ).timeDropper({
                 format: 'H:mm'
             });
+
+            pickaday.setDate(new Date("{{old('start_date')}}"));
         });
 
         jQuery(document).ready(function() {
             $(".chosen").chosen();
+
+            $( ".chosen" ).change();
         });
 
         $( ".chosen" ).change(function() {
@@ -485,15 +497,18 @@
 
         function check_stylist_availability() {
             if($('#stylist').val() != "" && $('#start_date').val() != "") {
-                var content = '<div class="col-md-6 row">'
-                        +'<input id="stylist_availability" onclick="show_stylist_availability(1)" type="radio" class="col-md-1 checkbox" name="stylist_availability">'
-                        +'<span class="col-md-10 control-label">This Stylist</span>'
-                +'</div><div class="col-md-6 row pull-right">'
-                        +'<input id="stylist_availability" onclick="show_stylist_availability(0)" type="radio" class="col-md-1 checkbox" name="stylist_availability">'
-                        +'<span class="col-md-10 control-label">All Stylist</span>'
-                +'</div><br/>'
-                +'<br/><div id="stylist_availability_content" class="row"></div>';
+                var content = '<div class="row"><div class="col-md-6" style="padding-right:3px !important">'
+                        +'<input id="stylist_availability_this" onclick="show_stylist_availability(1)" type="radio" class="col-md-1 checkbox" name="stylist_availability">'
+                        +'<label style="font-weight: normal !important;" for="stylist_availability_this" class="col-md-10 control-label">This Stylist</label>'
+                +'</div><div class="col-md-6" style="padding-right:3px !important">'
+                        +'<input id="stylist_availability_all" onclick="show_stylist_availability(0)" type="radio" class="col-md-1 checkbox" name="stylist_availability">'
+                        +'<label style="font-weight: normal !important;" for="stylist_availability_all" class="col-md-10 control-label">All Stylist</label>'
+                +'</div></div>'
+                +'<div id="stylist_availability_content"></div>';
                 $('#stylist_content').html(content);
+
+                document.getElementById('stylist_availability_this').checked = true;
+                show_stylist_availability(1);
             } else {
                 $('#stylist_content').html('<p>Select a stylist and a start date to see the stylist availability</p>');
             }
@@ -520,7 +535,7 @@
                                     var key = key3;
                                     $.each( value3, function( key4, value4 ) {
                                         $('#stylist_availability_content').append(
-                                                '<div class="col-md-6 pull-left"><a href="#">'+key+'</a></div><div class="col-md-6 row pull-right">'+value4+'</div>'
+                                                '<div class="row"><div class="col-md-6" style="padding-right:3px !important"><a href="#">'+key+'</a></div><div class="col-md-6" style="padding-right:3px !important">'+value4+'</div></div>'
                                         );
                                     });
                                 });

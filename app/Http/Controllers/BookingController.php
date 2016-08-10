@@ -104,7 +104,8 @@ class BookingController extends Controller
 
         if($validator->fails()) {
             return redirect('booking/create')
-                ->withErrors($validator);
+                ->withErrors($validator)
+                ->withInput();
         }
 
         $booking = new Booking();

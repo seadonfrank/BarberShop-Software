@@ -70,7 +70,7 @@
                 </div>
 
                 <div class="form-group{{ $errors->has('is_student') ? ' has-error' : '' }}">
-                    <label for="is_student" class="col-md-3 control-label">IsStudent</label>
+                    <label for="is_student" class="col-md-3 control-label">Student</label>
 
                     <div class="col-md-1">
                         <select id="is_student" class="form-control" name="is_student">
@@ -86,7 +86,7 @@
                 </div>
 
                 <div class="form-group{{ $errors->has('is_child') ? ' has-error' : '' }}">
-                    <label for="is_child" class="col-md-3 control-label">IsChild</label>
+                    <label for="is_child" class="col-md-3 control-label">Child</label>
 
                     <div class="col-md-1">
                         <select id="is_child" class="form-control" name="is_child">
@@ -102,7 +102,7 @@
                 </div>
 
                 <div class="form-group{{ $errors->has('is_military') ? ' has-error' : '' }}">
-                    <label for="is_military" class="col-md-3 control-label">IsMilitary</label>
+                    <label for="is_military" class="col-md-3 control-label">Military</label>
 
                     <div class="col-md-1">
                         <select id="is_military" class="form-control" name="is_military">
@@ -119,7 +119,7 @@
                 </div>
 
                 <div class="form-group{{ $errors->has('is_beard') ? ' has-error' : '' }}">
-                    <label for="is_beard" class="col-md-3 control-label">HasBeard</label>
+                    <label for="is_beard" class="col-md-3 control-label">Beard</label>
 
                     <div class="col-md-1">
                         <select id="is_beard" class="form-control" name="is_beard">
