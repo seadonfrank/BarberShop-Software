@@ -3,19 +3,12 @@
 namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
-
 use App\Http\Requests;
-
 use DB;
-
 use Log;
-
 use App\Customer;
-
 use App\User;
-
 use App\Booking;
-
 use Illuminate\Support\Facades\Validator;
 
 class BookingController extends Controller
@@ -597,8 +590,9 @@ class BookingController extends Controller
         }
 
         $format_stylist_availabilities = array();
-        $start_date_time = $open_date_time = new \DateTime(date('Y-m-d', $date_time->getTimestamp())." 09:00:00");
-        $end_date_time = $close_date_time = new \DateTime(date('Y-m-d', $date_time->getTimestamp())." 18:00:00");
+        $setting = DB::table('settings')->whereIn('id', [2, 3, 4])->get();
+        $start_date_time = $open_date_time = new \DateTime(date('Y-m-d', $date_time->getTimestamp())." ".$setting[1]->value.":00");
+        $end_date_time = $close_date_time = new \DateTime(date('Y-m-d', $date_time->getTimestamp())." ".$setting[2]->value.":00");
 
         if(count($raw_stylist_availabilities) <= 0) {
             $format_stylist_availabilities[User::find($user_id)->name][] =
@@ -637,9 +631,39 @@ class BookingController extends Controller
             }
         }
 
+        $default_stylist_availabilities = array();
+
+        if(count($raw_stylist_availabilities) <= 0) {
+            $default_stylist_availabilities[User::find($user_id)->name][] = "No Bookings Found";
+        } else {
+            foreach($raw_stylist_availabilities as $raw_stylist_availability) {
+                $total_duration = "00:00:00";
+                foreach($raw_stylist_availability['service_durations'] as $duration) {
+                    $temp_time = array();
+                    $time1 = explode(':', $duration);
+                    $time2 = explode(':', $total_duration);
+                    $temp_time[0] = $time1[0] + $time2[0];
+                    $temp_time[1] = $time1[1] + $time2[1];
+                    $temp_time[2] = $time1[2] + $time2[2];
+                    $total_duration = implode(':', $temp_time);
+                }
+
+                $end_date_time = new \DateTime($raw_stylist_availability['start_date_time']);
+                $start_date_time = new \DateTime($raw_stylist_availability['start_date_time']);
+                $duration = explode(':', $total_duration);
+                $end_date_time->modify("+{$duration[0]} hours");
+                $end_date_time->modify("+{$duration[1]} minutes");
+                $end_date_time->modify("+{$duration[2]} seconds");
+
+                $default_stylist_availabilities[$raw_stylist_availability['user']['name']][] =
+                    date('H:i:s', $start_date_time->getTimestamp())." - ".date('H:i:s', $end_date_time->getTimestamp());
+            }
+        }
+
         return array(
             'stylist_availabilities_raw' => $raw_stylist_availabilities,
-            'stylist_availabilities_format' => $format_stylist_availabilities,
+            'stylist_availabilities_format_default' =>
+                ($setting[0]->value == "1")?$default_stylist_availabilities:$format_stylist_availabilities,
         );
     }
 }

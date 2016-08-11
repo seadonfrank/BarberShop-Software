@@ -530,7 +530,7 @@
                 success: function(data) {
                     $.each( data, function( key1, value1 ) {
                         $.each( value1, function( key2, value2 ) {
-                            if(key2 == "stylist_availabilities_format") {
+                            if(key2 == "stylist_availabilities_format_default") {
                                 $.each( value2, function( key3, value3 ) {
                                     var key = key3;
                                     $.each( value3, function( key4, value4 ) {
