@@ -30,7 +30,13 @@
                                 <select id="customer" onchange="check_availability()" style="width:100% !important;" class="col-md-12 chosen form-control" name="customer">
                                     <option value="">Select Existing Customer</option>
                                     @foreach($customers as $customer)
-                                        <option @if(old('customer') == $customer->id) selected @endif @if($booking['customer']['id'] == $customer->id) selected @endif value="{{$customer->id}}">{{$customer->name}}</option>
+                                        <option
+                                                @if(old('customer') != "")
+                                                    @if(old('customer') == $customer->id) selected @endif
+                                                @elseif(old('customer') == "" && old('name') == "")
+                                                    @if($booking['customer']['id'] == $customer->id) selected @endif
+                                                @endif
+                                        value="{{$customer->id}}">{{$customer->name}}</option>
                                     @endforeach
                                 </select>
 
@@ -465,7 +471,7 @@
                     customer_id = $('#customer').val();
                 }
                 $.ajax({
-                    url: '/availability/'+$('#stylist').val()+'/'+customer_id+'/'+$('#start_date').val()+' '+$('#start_time').val()+':00/'+services,
+                    url: '/availability/'+$('#stylist').val()+'/'+customer_id+'/'+$('#start_date').val()+' '+$('#start_time').val()+':00/'+services+"/{{$booking['id']}}",
                     type: 'get',
                     dataType: 'json',
                     success: function(data) {

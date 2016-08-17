@@ -53,7 +53,7 @@ Route::post('process/{id}', 'BookingController@postProcess');
 
 Route::get('events', 'BookingController@events');
 
-Route::get('availability/{user_id}/{customer_id}/{date_time}/{duration}', 'BookingController@availability');
+Route::get('availability/{user_id}/{customer_id}/{date_time}/{duration}/{booking_id?}', 'BookingController@availability');
 
 Route::get('stylist_availability/{date_time}/{user_id?}', 'BookingController@stylist_availability');
 

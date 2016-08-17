@@ -195,25 +195,56 @@ class BookingController extends Controller
     public function update(Request $request, $id)
     {
         //
-        $validator = Validator::make($request->toArray(), array(
-            'customer' => 'required|max:255|numeric',
-            'stylist' => 'required|max:255|numeric',
-            'start' => 'required|date_format:Y-m-d H:i:s',
-        ));
+        $validator = null;
+        $customer_id = $request->get('customer');
+        if(isset($customer_id) && $customer_id != "") {
+            $validator = Validator::make($request->toArray(), array(
+                'customer' => 'required|max:255|numeric',
 
-        if (count($request->get('services')) <=  0) {
+                'stylist' => 'required|max:255|numeric',
+                'start_date' => 'required|date_format:Y-m-d',
+                'start_time' => 'required|date_format:H:i',
+            ));
+        } else {
+            $validator = Validator::make($request->toArray(), array(
+                'name' => 'required|max:255',
+                'email_address' => 'required|email|max:255|unique:customers',
+                'phone_number' => 'required|max:255',
+                'next_reminder' => 'required|date_format:Y-m-d H:i:s',
+
+                'stylist' => 'required|max:255|numeric',
+                'start_date' => 'required|date_format:Y-m-d',
+                'start_time' => 'required|date_format:H:i',
+            ));
+        }
+
+        $services = DB::table('services')->select('id', 'name')->get();
+        $services_request = array();
+        foreach($services as $service) {
+            if($request->get('service_'.$service->id)){
+                $services_request[] = $service->id;
+            }
+        }
+
+        if (count($services_request) <=  0) {
             $validator->after(function ($validator) {
                 $validator->getMessageBag()->add('services', 'The services field is required.');
             });
         }
 
         if($validator->fails()) {
-            return redirect('booking/create')
-                ->withErrors($validator);
+            return redirect('booking/'.$id.'/edit')
+                ->withErrors($validator)
+                ->withInput();
         }
 
         $booking = Booking::find($id);
-        $booking->customer_id = $request->get('customer');
+        if(isset($customer_id) && $customer_id != "") {
+            $booking->customer_id = $request->get('customer');
+        } else {
+            $customer = new CustomerController();
+            $booking->customer_id = $customer->store($request, true);
+        }
         $booking->user_id = $request->get('stylist');
         $booking->status = "Finalised";
         $booking->send_reminders = 1;
@@ -221,8 +252,11 @@ class BookingController extends Controller
 
         $booking->services()->detach();
 
-        foreach($request->get('services') as $service) {
-            $booking->services()->attach($service, array('start_date_time'=>$request->get("start")));
+        foreach($services_request as $service) {
+            $booking->services()->attach(
+                $service,
+                array('start_date_time'=>$request->get("start_date")." ".$request->get("start_time").":00")
+            );
         }
 
         return redirect('booking');
@@ -435,7 +469,7 @@ class BookingController extends Controller
         return array("success" => 1, "result" =>$result);
     }
 
-    public function availability($user_id, $customer_id, $start_date_time, $service_ids)
+    public function availability($user_id, $customer_id, $start_date_time, $service_ids, $booking_id = null)
     {
         $available = true;
 
@@ -472,14 +506,16 @@ class BookingController extends Controller
 
         $temp_availabilities = array();
         foreach($availabilities as $availability) {
-            $temp_availabilities[$availability->booking_id]['start_date_time'] = $availability->start_date_time;
-            $temp_availabilities[$availability->booking_id]['service_ids'][] = $availability->service_id;
-            $temp_availabilities[$availability->booking_id]['service_names'][] = $availability->name;
-            $temp_availabilities[$availability->booking_id]['service_costs'][] = $availability->cost;
-            $temp_availabilities[$availability->booking_id]['service_durations'][] = $availability->duration;
-            $temp_availabilities[$availability->booking_id]['customer'] = Customer::find($availability->customer_id);
-            $temp_availabilities[$availability->booking_id]['user'] = User::find($availability->user_id);;
-            $temp_availabilities[$availability->booking_id]['status'] = $availability->status;
+            if($booking_id != null && $booking_id != $availability->booking_id) {
+                $temp_availabilities[$availability->booking_id]['start_date_time'] = $availability->start_date_time;
+                $temp_availabilities[$availability->booking_id]['service_ids'][] = $availability->service_id;
+                $temp_availabilities[$availability->booking_id]['service_names'][] = $availability->name;
+                $temp_availabilities[$availability->booking_id]['service_costs'][] = $availability->cost;
+                $temp_availabilities[$availability->booking_id]['service_durations'][] = $availability->duration;
+                $temp_availabilities[$availability->booking_id]['customer'] = Customer::find($availability->customer_id);
+                $temp_availabilities[$availability->booking_id]['user'] = User::find($availability->user_id);;
+                $temp_availabilities[$availability->booking_id]['status'] = $availability->status;
+            }
         }
         $availabilities = $temp_availabilities;
         foreach($availabilities as $key=>$value) {
