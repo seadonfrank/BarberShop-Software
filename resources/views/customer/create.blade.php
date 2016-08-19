@@ -27,7 +27,7 @@
                 </div>
 
                 <div class="form-group{{ $errors->has('email_address') ? ' has-error' : '' }}">
-                    <label for="email_address" class="col-md-3 control-label">EmailAddress</label>
+                    <label for="email_address" class="col-md-3 control-label">Email Address</label>
 
                     <div class="col-md-8">
                         <input id="email_address" type="email" class="form-control" name="email_address" value="{{ old('email_address') }}">
@@ -41,7 +41,7 @@
                 </div>
 
                 <div class="form-group{{ $errors->has('phone_number') ? ' has-error' : '' }}">
-                    <label for="phone_number" class="col-md-3 control-label">PhoneNumber</label>
+                    <label for="phone_number" class="col-md-3 control-label">Phone Number</label>
 
                     <div class="col-md-8">
                         <input id="phone_number" type="text" class="form-control" name="phone_number" value="{{ old('phone_number') }}">
@@ -55,7 +55,7 @@
                 </div>
 
                 <div class="form-group{{ $errors->has('send_reminders') ? ' has-error' : '' }}">
-                    <label for="send_reminders" class="col-md-3 control-label">SendReminders</label>
+                    <label for="send_reminders" class="col-md-3 control-label">Send Reminders</label>
 
                     <div class="col-md-1">
                         <input id="send_reminders" type="checkbox" class="checkbox" name="send_reminders" @if(old('send_reminders') == true) checked @endif>
@@ -137,7 +137,7 @@
                 </div>
 
                 <div class="form-group{{ $errors->has('next_reminder') ? ' has-error' : '' }}">
-                    <label for="next_reminder" class="col-md-3 control-label">NextReminder</label>
+                    <label for="next_reminder" class="col-md-3 control-label">Next Reminder</label>
 
                     <div class="col-md-8">
                         <input id="next_reminder" type="text" class="form-control" name="next_reminder" placeholder="2016-12-20 17:16:18" value="{{ old('next_reminder') }}">

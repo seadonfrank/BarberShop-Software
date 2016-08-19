@@ -9,20 +9,23 @@
             </div>
             <table class="table">
                 <tr>
-                    <th>Status</th>
-                    <th>Booking Date</th>
-                    <th>StartTime</th>
-                    <th>EndTime</th>
-                    <th>CustomerName</th>
-                    <th>StylistName</th>
+                    <!--<th>Status</th>-->
+                    <!--<th>BookingDateTime</th>-->
+                    <th>Date</th>
+                    <th>Start Time</th>
+                    <th>End Time</th>
+                    <th>Customer</th>
+                    <th>Stylist</th>
                     <th></th>
                 </tr>
                 @foreach($processes as $process)
+                    <?php $start_date_time = new \DateTime($process['start_date_time']); ?>
                     <tr>
-                        <td>{{$process['status']}}</td>
-                        <td>{{$process['created_at']}}</td>
-                        <td>{{$process['start_date_time']}}</td>
-                        <td>{{$process['end_date_time']}}</td>
+                        <!--<td>{{$process['status']}}</td>-->
+                        <!--<td>{{$process['created_at']}}</td>-->
+                        <td>{{date("Y-m-d", $start_date_time->getTimestamp())}}</td>
+                        <td>{{date("H:i:s", $start_date_time->getTimestamp())}}</td>
+                        <td>{{date("H:i:s", $start_date_time->getTimestamp())}}</td>
                         <td>{{$process['customer']['name']}}</td>
                         <td>{{$process['user']['name']}}</td>
                         <td>

@@ -57,7 +57,7 @@ class CustomerController extends Controller
             'name' => 'required|max:255',
             'email_address' => 'required|email|max:255|unique:customers',
             'phone_number' => 'required|max:255',
-            'next_reminder' => 'required|date_format:Y-m-d H:i:s',
+            //'next_reminder' => 'required|date_format:Y-m-d H:i:s',
 
         ]);
         $reminder = $request->get('send_reminders');
@@ -65,16 +65,36 @@ class CustomerController extends Controller
             $reminder = 1;
         else
             $reminder = 0;
+        $is_student = $request->get('is_student');
+        if(isset($is_student) && $is_student == true)
+            $is_student = 1;
+        else
+            $is_student = 0;
+        $is_child = $request->get('is_child');
+        if(isset($is_child) && $is_child == true)
+            $is_child = 1;
+        else
+            $is_child = 0;
+        $is_military = $request->get('is_military');
+        if(isset($is_military) && $is_military == true)
+            $is_military = 1;
+        else
+            $is_military = 0;
+        $is_beard = $request->get('is_beard');
+        if(isset($is_beard) && $is_beard == true)
+            $is_beard = 1;
+        else
+            $is_beard = 0;
         $id = DB::table('customers')->insertGetId(
             [
                 'name' => $request->get('name'),
                 'email_address' => $request->get('email_address'),
                 'phone_number' => $request->get('phone_number'),
                 'send_reminders' => $reminder,
-                'is_student' => $request->get('is_student'),
-                'is_child' => $request->get('is_child'),
-                'is_military' => $request->get('is_military'),
-                'is_beard' => $request->get('is_beard'),
+                'is_student' => $is_student,
+                'is_child' => $is_child,
+                'is_military' => $is_military,
+                'is_beard' => $is_beard,
                 'next_reminder' =>  date("Y-m-d H:i:s", strtotime($request->get('next_reminder'))),
             ]
         );

@@ -54,27 +54,27 @@
                                 <p class="col-md-7" id="dis_name">{{$booking['customer']['name']}}</p>
                             </div>
                             <div class="col-md-12">
-                                <label for="email_address" class="col-md-5 control-label">EmailAddress:</label>
+                                <label for="email_address" class="col-md-5 control-label">Email:</label>
                                 <p class="col-md-7" id="dis_email_address">{{$booking['customer']['email_address']}}</p>
                             </div>
                             <div class="col-md-12">
-                                <label for="phone_number" class="col-md-5 control-label">PhoneNumber:</label>
+                                <label for="phone_number" class="col-md-5 control-label">Phone:</label>
                                 <p class="col-md-7" id="dis_phone_number">{{$booking['customer']['phone_number']}}</p>
                             </div>
                             <div class="col-md-12">
-                                <label for="send_reminders" class="col-md-5 control-label">SendReminders:</label>
+                                <label for="send_reminders" class="col-md-5 control-label">Reminders:</label>
                                 <p class="col-md-7" id="dis_send_reminders">@if($booking['customer']['send_reminders']) Yes @else No @endif</p>
                             </div>
                             <div class="col-md-12">
-                                <label for="is_student" class="col-md-5 control-label">IsStudent:</label>
+                                <label for="is_student" class="col-md-5 control-label">Student:</label>
                                 <p class="col-md-7" id="dis_is_student">@if($booking['customer']['is_student']) Yes @else No @endif</p>
                             </div>
                             <div class="col-md-12">
-                                <label for="is_child" class="col-md-5 control-label">IsChild:</label>
+                                <label for="is_child" class="col-md-5 control-label">Child:</label>
                                 <p class="col-md-7" id="dis_is_child">@if($booking['customer']['is_child']) Yes @else No @endif</p>
                             </div>
                             <div class="col-md-12">
-                                <label for="is_military" class="col-md-5 control-label">IsMilitary:</label>
+                                <label for="is_military" class="col-md-5 control-label">Military:</label>
                                 <p class="col-md-7" id="dis_is_military">@if($booking['customer']['is_military']) Yes @else No @endif</p>
                             </div>
                             <div class="col-md-12">
@@ -82,7 +82,7 @@
                                 <p class="col-md-7" id="dis_is_beard">@if($booking['customer']['is_beard']) Yes @else No @endif</p>
                             </div>
                             <div class="col-md-12">
-                                <label for="next_reminder" class="col-md-5 control-label">NextReminder:</label>
+                                <label for="next_reminder" class="col-md-5 control-label">Next Reminder:</label>
                                 <p class="col-md-7" id="dis_next_reminder">{{$booking['customer']['next_reminder']}}</p>
                             </div>
                         </div>
@@ -103,7 +103,7 @@
                             </div>
 
                             <div class="form-group{{ $errors->has('email_address') ? ' has-error' : '' }}">
-                                <input onkeyup="check_availability()" placeholder="EmailAdress" id="email_address" type="text" class="form-control" name="email_address" value="{{ old('email_address') }}">
+                                <input onkeyup="check_availability()" placeholder="Email Address" id="email_address" type="text" class="form-control" name="email_address" value="{{ old('email_address') }}">
 
                                 @if ($errors->has('email_address'))
                                     <span class="help-block">
@@ -113,7 +113,7 @@
                             </div>
 
                             <div class="form-group{{ $errors->has('phone_number') ? ' has-error' : '' }}">
-                                <input onkeyup="check_availability()" placeholder="PhoneNumber" id="phone_number" type="text" class="form-control" name="phone_number" value="{{ old('phone_number') }}">
+                                <input onkeyup="check_availability()" placeholder="Phone Number" id="phone_number" type="text" class="form-control" name="phone_number" value="{{ old('phone_number') }}">
 
                                 @if ($errors->has('phone_number'))
                                     <span class="help-block">
@@ -123,6 +123,8 @@
                             </div>
 
                             <div class="form-group{{ $errors->has('send_reminders') ? ' has-error' : '' }}">
+                                <label style="font-weight: normal !important;" for="send_reminders" class="col-md-10 control-label">Send Reminders</label>
+
                                 <div class="col-md-2">
                                     <input id="send_reminders" type="checkbox" class="checkbox" name="send_reminders" @if(old('send_reminders') == true) checked @endif>
 
@@ -132,19 +134,15 @@
                                         </span>
                                     @endif
                                 </div>
-                                <label style="font-weight: normal !important;" for="send_reminders" class="col-md-10 control-label">SendReminders</label>
                             </div>
 
                             <br/><br/>
 
                             <div class="form-group{{ $errors->has('is_student') ? ' has-error' : '' }}">
-                                <span class="col-md-4 control-label">Student</span>
+                                <label style="font-weight: normal !important;" for="is_student" class="col-md-10 control-label">Student</label>
 
-                                <div class="col-md-8">
-                                    <select id="is_student" class="form-control" name="is_student">
-                                        <option @if(old('is_student') == "1") selected @endif value="1">True</option>
-                                        <option @if(old('is_student') == "0") selected @endif value="0">False</option>
-                                    </select>
+                                <div class="col-md-2">
+                                    <input id="is_student" type="checkbox" class="checkbox" name="is_student" @if(old('is_student') == true) checked @endif>
 
                                     @if ($errors->has('is_student'))
                                         <span class="help-block">
@@ -157,13 +155,10 @@
                             <br/><br/>
 
                             <div class="form-group{{ $errors->has('is_child') ? ' has-error' : '' }}">
-                                <span class="col-md-4 control-label">Child</span>
+                                <label style="font-weight: normal !important;" for="is_child" class="col-md-10 control-label">Child</label>
 
-                                <div class="col-md-8">
-                                    <select id="is_child" class="form-control" name="is_child">
-                                        <option @if(old('is_child') == "1") selected @endif value="1">True</option>
-                                        <option @if(old('is_child') == "0") selected @endif value="0">False</option>
-                                    </select>
+                                <div class="col-md-2">
+                                    <input id="is_child" type="checkbox" class="checkbox" name="is_child" @if(old('is_child') == true) checked @endif>
 
                                     @if ($errors->has('is_child'))
                                         <span class="help-block">
@@ -176,13 +171,10 @@
                             <br/><br/>
 
                             <div class="form-group{{ $errors->has('is_military') ? ' has-error' : '' }}">
-                                <span class="col-md-4 control-label">Military</span>
+                                <label style="font-weight: normal !important;" for="is_military" class="col-md-10 control-label">Military</label>
 
-                                <div class="col-md-8">
-                                    <select id="is_military" class="form-control" name="is_military">
-                                        <option @if(old('is_military') == "1") selected @endif value="1">True</option>
-                                        <option @if(old('is_military') == "0") selected @endif value="0">False</option>
-                                    </select>
+                                <div class="col-md-2">
+                                    <input id="is_military" type="checkbox" class="checkbox" name="is_military" @if(old('is_military') == true) checked @endif>
 
                                     @if ($errors->has('is_military'))
                                         <span class="help-block">
@@ -195,13 +187,10 @@
                             <br/><br/>
 
                             <div class="form-group{{ $errors->has('is_beard') ? ' has-error' : '' }}">
-                                <span class="col-md-4 control-label">Beard</span>
+                                <label style="font-weight: normal !important;" for="is_beard" class="col-md-10 control-label">Beard</label>
 
-                                <div class="col-md-8">
-                                    <select id="is_beard" class="form-control" name="is_beard">
-                                        <option @if(old('is_beard') == "1") selected @endif value="1">True</option>
-                                        <option @if(old('is_beard') == "0") selected @endif value="0">False</option>
-                                    </select>
+                                <div class="col-md-2">
+                                    <input id="is_beard" type="checkbox" class="checkbox" name="is_beard" @if(old('is_beard') == true) checked @endif>
 
                                     @if ($errors->has('is_beard'))
                                         <span class="help-block">
@@ -211,10 +200,12 @@
                                 </div>
                             </div>
 
-                            <br/><br/>
+                            <input name="next_reminder" id="next_reminder" type="hidden" class="form-control" value="0000-00-00 00:00:00"/>
+
+                            <!--<br/><br/>
 
                             <div class="form-group{{ $errors->has('next_reminder') ? ' has-error' : '' }}">
-                                <span class="col-md-4 control-label">NextReminder</span>
+                                <span class="col-md-4 control-label">Next Reminder</span>
 
                                 <div class="col-md-8">
                                     <div class='input-group date' id='datetimepicker'>
@@ -230,7 +221,7 @@
                                         </span>
                                     @endif
                                 </div>
-                            </div>
+                            </div>-->
                         </div>
                     </div>
                 </div>

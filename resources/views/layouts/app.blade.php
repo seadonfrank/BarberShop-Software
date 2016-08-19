@@ -44,7 +44,7 @@
 
                 <!-- Branding Image -->
                 <a class="navbar-brand" href="{{ url('/') }}">
-                    Exeter Barber Shop
+                    {{App\Setting::find(5)->value}}
                 </a>
             </div>
 
@@ -62,21 +62,20 @@
                 <ul class="nav navbar-nav navbar-right">
                     <!-- Authentication Links -->
                     @if (Auth::check())
-                        <li class="dropdown">
-                            <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-expanded="false">
-                                {{ Auth::user()->name }} <span class="caret"></span>
+                        <li><a href="{{ url('/logout') }}">Log Out</a></li>
+                        <li @if(Auth::user()->isadmin) class="dropdown" @endif>
+                            <a href="#" @if(Auth::user()->isadmin) class="dropdown-toggle" data-toggle="dropdown" role="button" aria-expanded="false" @endif>
+                                {{ Auth::user()->name }} @if(Auth::user()->isadmin) <span class="caret"></span> @endif
                             </a>
 
-                            <ul class="dropdown-menu" role="menu">
-                                @if(Auth::user()->isadmin)
+                            @if(Auth::user()->isadmin)
+                                <ul class="dropdown-menu" role="menu">
                                     <li @if(isset($active) && $active == "user") class="active" @endif><a href="{{ url('/user') }}">Users</a></li>
                                     <li @if(isset($active) && $active == "product") class="active" @endif><a href="{{ url('/product') }}">Products</a></li>
                                     <li @if(isset($active) && $active == "service") class="active" @endif><a href="{{ url('/service') }}">Services</a></li>
                                     <li @if(isset($active) && $active == "setting") class="active" @endif><a href="{{ url('/setting') }}">Settings</a></li>
-                                    <li class="divider"></li>
-                                @endif
-                                <li><a href="{{ url('/logout') }}">Log Off</a></li>
-                            </ul>
+                                </ul>
+                            @endif
                         </li>
                     @endif
                 </ul>

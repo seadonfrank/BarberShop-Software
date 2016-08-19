@@ -12,7 +12,7 @@ class SettingsTableSeeder extends Seeder
     public function run()
     {
         //
-        DB::table('settings')->insert([
+        /*DB::table('settings')->insert([
             'isadmin' => 1,
             'key' => 'Pre-booking Reminders',
             'help' => 'Number of days before reminder date to send the reminder. Default : 2',
@@ -38,6 +38,20 @@ class SettingsTableSeeder extends Seeder
             'key' => 'End Time on a Working Day',
             'help' => 'Time at which the Stylist would End his/her work It should be 24 hours format only. Default : 18:00',
             'value' => '18:00',
+            'type' => 'text',
+        ]);*/
+        DB::table('settings')->insert([
+            'isadmin' => 1,
+            'key' => 'Business Name',
+            'help' => 'Name of the Business. Default : BarberShop',
+            'value' => 'BarberShop',
+            'type' => 'text',
+        ]);
+        DB::table('settings')->insert([
+            'isadmin' => 1,
+            'key' => 'Business Contact number',
+            'help' => 'Contact Number of the Business. Default : 0000000000',
+            'value' => '0000000000',
             'type' => 'text',
         ]);
     }

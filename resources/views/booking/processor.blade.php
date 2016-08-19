@@ -19,8 +19,8 @@
                                 <div class="form-group">
                                     <p><label>Booking Date : </label> {{$process[$id]['start_date']}}</p>
                                     <p><label>Booking Time : </label> {{$process[$id]['start_time']}}</p>
-                                    <p><label>Stylist Name : </label> {{$process[$id]['user']->name}}</p>
-                                    <p><label>Stylist Email : </label> {{$process[$id]['user']->email}}</p>
+                                    <!--<p><label>Stylist Name : </label> {{$process[$id]['user']->name}}</p>
+                                    <p><label>Stylist Email : </label> {{$process[$id]['user']->email}}</p>-->
                                 </div>
                             </div>
 
@@ -42,7 +42,7 @@
                                 </div>
 
                                 <div class="form-group{{ $errors->has('email_address') ? ' has-error' : '' }}">
-                                    <input disabled placeholder="EmailAdress" id="email_address" type="text" class="form-control" name="email_address" value="{{$process[$id]['customer']->email_address}}">
+                                    <input disabled placeholder="Email Address" id="email_address" type="text" class="form-control" name="email_address" value="{{$process[$id]['customer']->email_address}}">
 
                                     @if ($errors->has('email_address'))
                                         <span class="help-block">
@@ -52,7 +52,7 @@
                                 </div>
 
                                 <div class="form-group{{ $errors->has('phone_number') ? ' has-error' : '' }}">
-                                    <input placeholder="PhoneNumber" id="phone_number" type="text" class="form-control" name="phone_number" value="{{$process[$id]['customer']->phone_number}}">
+                                    <input placeholder="Phone Number" id="phone_number" type="text" class="form-control" name="phone_number" value="{{$process[$id]['customer']->phone_number}}">
 
                                     @if ($errors->has('phone_number'))
                                         <span class="help-block">
@@ -71,7 +71,7 @@
                                             </span>
                                         @endif
                                     </div>
-                                    <label style="font-weight: normal !important;" for="send_reminders" class="col-md-10 control-label">SendReminders</label>
+                                    <label style="font-weight: normal !important;" for="send_reminders" class="col-md-10 control-label">Send Reminders</label>
                                 </div>
 
                                 <br/><br/>
@@ -153,7 +153,7 @@
                                 <br/><br/>
 
                                 <div class="form-group{{ $errors->has('next_reminder') ? ' has-error' : '' }}">
-                                    <span class="col-md-4 control-label">NextReminder</span>
+                                    <span class="col-md-4 control-label">Next Reminder</span>
 
                                     <div class="col-md-8">
                                         <select id="next_reminder" class="form-control" name="next_reminder">

@@ -13,14 +13,14 @@
             <table class="table">
                 <tr>
                     <th>Name</th>
-                    <th>EmailAddress</th>
-                    <th>PhoneNumbers</th>
-                    <th>SendReminders</th>
+                    <th>Email Address</th>
+                    <th>Phone Numbers</th>
+                    <th>Send Reminders</th>
                     <th>Student</th>
                     <th>Child</th>
                     <th>Military</th>
                     <th>Beard</th>
-                    <th>NextReminder</th>
+                    <th>Next Reminder</th>
                     <th></th>
                 </tr>
                 @foreach($customers as $customer)
@@ -93,15 +93,15 @@
                             <p class="col-md-8" id="name"></p>
                         </div>
                         <div class="col-md-12">
-                            <label for="email_address" class="col-md-4 control-label">EmailAddress:</label>
+                            <label for="email_address" class="col-md-4 control-label">Email Address:</label>
                             <p class="col-md-8" id="email_address"></p>
                         </div>
                         <div class="col-md-12">
-                            <label for="phone_number" class="col-md-4 control-label">PhoneNumber:</label>
+                            <label for="phone_number" class="col-md-4 control-label">Phone Number:</label>
                             <p class="col-md-8" id="phone_number"></p>
                         </div>
                         <div class="col-md-12">
-                            <label for="send_reminders" class="col-md-4 control-label">SendReminders:</label>
+                            <label for="send_reminders" class="col-md-4 control-label">Send Reminders:</label>
                             <p class="col-md-8" id="send_reminders"></p>
                         </div>
                         <div class="col-md-12">
@@ -121,7 +121,7 @@
                             <p class="col-md-8" id="is_beard"></p>
                         </div>
                         <div class="col-md-12">
-                            <label for="next_reminder" class="col-md-4 control-label">NextReminder:</label>
+                            <label for="next_reminder" class="col-md-4 control-label">Next Reminder:</label>
                             <p class="col-md-8" id="next_reminder"></p>
                         </div>
                     </div>

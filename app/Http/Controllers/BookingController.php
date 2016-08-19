@@ -73,7 +73,7 @@ class BookingController extends Controller
                 'name' => 'required|max:255',
                 'email_address' => 'required|email|max:255|unique:customers',
                 'phone_number' => 'required|max:255',
-                'next_reminder' => 'required|date_format:Y-m-d H:i:s',
+                //'next_reminder' => 'required|date_format:Y-m-d H:i:s',
 
                 'stylist' => 'required|max:255|numeric',
                 'start_date' => 'required|date_format:Y-m-d',
@@ -210,7 +210,7 @@ class BookingController extends Controller
                 'name' => 'required|max:255',
                 'email_address' => 'required|email|max:255|unique:customers',
                 'phone_number' => 'required|max:255',
-                'next_reminder' => 'required|date_format:Y-m-d H:i:s',
+                //'next_reminder' => 'required|date_format:Y-m-d H:i:s',
 
                 'stylist' => 'required|max:255|numeric',
                 'start_date' => 'required|date_format:Y-m-d',
