@@ -16,7 +16,7 @@
                             </td>
                             <td>
                                 <h3></h3><br/>
-                                <input id="{{$setting->id}}" class="col-md-4" type="{{$setting->type}}" @if($setting->type=='checkbox' && $setting->value=='1') checked @endif value="{{$setting->value}}">
+                                <input id="{{$setting->id}}" class="col-md-8" type="{{$setting->type}}" @if($setting->type=='checkbox' && $setting->value=='1') checked @endif value="{{$setting->value}}">
                             </td>
                             <td>
                                 <h3></h3><br/>

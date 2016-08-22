@@ -2,20 +2,13 @@
 
 namespace App\Console\Commands;
 
-use App\Setting;
-
 use Illuminate\Console\Command;
-
-use Log;
-
 use App\Customer;
-
-use App\User;
-
 use App\Booking;
-
+use App\Setting;
+use App\User;
 use Mail;
-
+use Log;
 use DB;
 
 class SendEmails extends Command
@@ -51,7 +44,10 @@ class SendEmails extends Command
      */
     public function handle()
     {
-        //Log::info("Sending Booking Reminder Emails"); // Post-Booking
+        $business['name'] = Setting::find(5)->value;
+        $business['contact_number'] = Setting::find(6)->value;
+
+        //Log::info("Sending Booking Reminder Emails"); // Re-Booking
 
         $customers = DB::table('customers')
             ->where('send_reminders', '=', 1)
@@ -59,11 +55,25 @@ class SendEmails extends Command
 
         foreach($customers as $customer) {
             if(date("Y-m-d H:i:s") >= $customer->next_reminder) {
-                $customer->body = "This is to remind you that, You have to book you next appointment at barbershop.";
-                $customer->opt_out = "opt_out_customer/".$customer->id;
+                //$customer->opt_out = "opt_out_customer/".$customer->id;
+                $customer->opt_out = "";
 
-                Mail::send('emails.reminder', ['customer' => $customer], function ($m) use ($customer) {
-                    $m->to($customer->email_address, $customer->name)->subject('Your Next Booking Reminder form Barbershop!');
+                $booking = DB::table('booking_service')
+                    ->join('bookings', 'bookings.id', '=', 'booking_service.booking_id')
+                    ->where('bookings.customer_id', '=', $customer->id)
+                    ->orderBy('booking_service.start_date_time', 'desc')
+                    ->first();
+
+                $data['customer'] = $customer;
+                $data['business'] = $business;
+                if(isset($booking)) {
+                    $data['booking'] = $booking;
+                    $date = new \DateTime($booking->start_date_time);
+                    $data['NoOfWeeks'] = $this->weeks_past(date('d/m/Y', $date->getTimestamp()));
+                }
+
+                Mail::send('emails.re_booking_reminder', ['data' => $data], function ($m) use ($customer, $business) {
+                    $m->to($customer->email_address, $customer->name)->subject('Your Next Booking Reminder from '.$business['name']);
                 });
 
                 $cust = Customer::find($customer->id);
@@ -93,18 +103,42 @@ class SendEmails extends Command
         }
 
         foreach($temp_bookings as $key=>$value) {
-            $value['customer']->body = "This is to remind that, you have an up-coming appointment at barbershop
-            with ".$value['user']->name."(".$value['user']->email.") at ".$value['start_date_time']." which was booked
-            on ".$value['created_at'].".";
-            $value['customer']->opt_out = "";
+            $data['booking'] = $value;
+            $data['business'] = $business;
+            $data['NoOfDays'] = $setting->value;
 
-            Mail::send('emails.reminder', ['customer' => $value['customer']], function ($m) use ($value) {
-                $m->to($value['customer']->email_address, $value['customer']->name)->subject('Your Up-coming Appointment Reminder form Barbershop!');
+            Mail::send('emails.pre_booking_reminder', ['data' => $data], function ($m) use ($business, $value) {
+                $m->to($value['customer']->email_address, $value['customer']->name)->subject('Your Up-coming Appointment Reminder from '.$business['name']);
             });
 
             $book = Booking::find($key);
             $book->send_reminders = 0;
             $book->save();
         }
+    }
+
+    public function weeks_past($date){
+        $start_date = strtotime($date);
+        $end_date = strtotime(date("d/m/Y"));
+
+        $start_week = date('W', $start_date);
+        $end_week = date('W', $end_date);
+
+        $start_year = date('Y', $start_date);
+        $end_year = date('Y', $end_date);
+        $years = $end_year-$start_year;
+
+        $weeks_past = 0;
+        if($years == 0){
+            $weeks_past = $end_week-$start_week+1;
+        }
+        if($years == 1){
+            $weeks_past = (52-$start_week+1)+$end_week;
+        }
+        if($years > 1){
+            $weeks_past = (52-$start_week+1)+$end_week+($years*52);
+        }
+
+        return $weeks_past;
     }
 }

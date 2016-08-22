@@ -16,7 +16,8 @@
     <link rel="stylesheet" href="{!! asset('/css/calendar.css') !!}">
     <link rel="stylesheet" href="{!! asset('/css/app.css') !!}">
     <link rel="stylesheet" href="{!! asset('/css/pickaday.css') !!}">
-    <link rel="stylesheet" href="{!! asset('/css/timedropper.min.css') !!}">
+    <link rel="stylesheet" href="{!! asset('/css/timepicker.min.css') !!}">
+    <!--<link rel="stylesheet" href="{!! asset('/css/timedropper.min.css') !!}">-->
 
     {{-- <link href="{{ elixir('css/app.css') }}" rel="stylesheet"> --}}
 
@@ -102,7 +103,8 @@
     <script type="text/javascript" src="{!! asset('/components/jstimezonedetect/jstz.min.js') !!}"></script>
     <script type="text/javascript" src="{!! asset('/js/calendar.js') !!}"></script>
     <script type="text/javascript" src="{!! asset('/js/pickaday.js') !!}"></script>
-    <script type="text/javascript" src="{!! asset('/js/timedropper.min.js') !!}"></script>
+    <script type="text/javascript" src="{!! asset('/js/timepicker.min.js') !!}"></script>
+    <!--<script type="text/javascript" src="{!! asset('/js/timedropper.min.js') !!}"></script>-->
 
     {{-- <script src="{{ elixir('js/app.js') }}"></script> --}}
 

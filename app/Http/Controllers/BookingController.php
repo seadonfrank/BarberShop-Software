@@ -506,7 +506,7 @@ class BookingController extends Controller
 
         $temp_availabilities = array();
         foreach($availabilities as $availability) {
-            if($booking_id != null && $booking_id != $availability->booking_id) {
+            if($booking_id != $availability->booking_id) {
                 $temp_availabilities[$availability->booking_id]['start_date_time'] = $availability->start_date_time;
                 $temp_availabilities[$availability->booking_id]['service_ids'][] = $availability->service_id;
                 $temp_availabilities[$availability->booking_id]['service_names'][] = $availability->name;

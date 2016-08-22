@@ -23,7 +23,7 @@
                         <h3 class="panel-title">Customer Details</h3>
                     </div>
                     <div class="panel-body">
-                        <div class="col-md-12">
+                        <div @if(old('name') != "")style="display: none"@endif id="existing_customer_block"class="col-md-12">
                             <div class="form-group{{ $errors->has('customer') ? ' has-error' : '' }}">
                                 <select id="customer" onchange="check_availability()" style="width:100% !important;" class="col-md-12 chosen form-control" name="customer">
                                     <option value="">Select Existing Customer</option>
@@ -40,50 +40,43 @@
                             </div>
                         </div>
 
-                        <div class="" id="customer_details" style="display: none">
+                        <div class="col-md-12" id="customer_details" style="display: none">
                             <div class="col-md-12">
-                                <label for="name" class="col-md-5 control-label">Name:</label>
-                                <p class="col-md-7" id="dis_name"></p>
+                                <b>Name: </b><span id="dis_name"></span>
                             </div>
                             <div class="col-md-12">
-                                <label for="email_address" class="col-md-5 control-label">Email :</label>
-                                <p class="col-md-7" id="dis_email_address"></p>
+                                <b>Email: </b><span id="dis_email_address"></span>
                             </div>
                             <div class="col-md-12">
-                                <label for="phone_number" class="col-md-5 control-label">Phone :</label>
-                                <p class="col-md-7" id="dis_phone_number"></p>
+                                <b>Phone: </b><span id="dis_phone_number"></span>
                             </div>
                             <div class="col-md-12">
-                                <label for="send_reminders" class="col-md-5 control-label">Reminders:</label>
-                                <p class="col-md-7" id="dis_send_reminders"></p>
+                                <b>Reminders: </b><span id="dis_send_reminders"></span>
                             </div>
                             <div class="col-md-12">
-                                <label for="is_student" class="col-md-5 control-label">Student:</label>
-                                <p class="col-md-7" id="dis_is_student"></p>
+                                <b>Student: </b><span id="dis_is_student"></span>
                             </div>
                             <div class="col-md-12">
-                                <label for="is_child" class="col-md-5 control-label">Child:</label>
-                                <p class="col-md-7" id="dis_is_child"></p>
+                                <b>Child: </b><span id="dis_is_child"></span>
                             </div>
                             <div class="col-md-12">
-                                <label for="is_military" class="col-md-5 control-label">Military:</label>
-                                <p class="col-md-7" id="dis_is_military"></p>
+                                <b>Military: </b><span id="dis_is_military"></span>
                             </div>
                             <div class="col-md-12">
-                                <label for="is_beard" class="col-md-5 control-label">Beard:</label>
-                                <p class="col-md-7" id="dis_is_beard"></p>
+                                <b>Beard: </b><span id="dis_is_beard"></span>
                             </div>
                             <div class="col-md-12">
-                                <label for="next_reminder" class="col-md-5 control-label">Next Reminder:</label>
-                                <p class="col-md-7" id="dis_next_reminder"></p>
+                                <b>Next Reminder: </b><span id="dis_next_reminder"></span>
                             </div>
+                            <br/>
                         </div>
 
                         <div class="col-md-12">
-                            <p><label>Or Create a New Customer</label></p>
+                            <p><a href="#" @if(old('name') != "")style="display: none"@endif id="new_customer" onclick="customer_toggle(this.id)" class="col-md-12 btn btn-success">Create a New Customer</a></p>
+                            <p><a href="#" @if(old('name') == "")style="display: none"@endif id="existing_customer" onclick="customer_toggle(this.id)" class="col-md-12 btn btn-success">Select an Existing Customer</a></p>
                         </div>
 
-                        <div class="col-md-12">
+                        <div @if(old('name') == "")style="display: none"@endif id="new_customer_block" class="col-md-12">
                             <div class="form-group{{ $errors->has('name') ? ' has-error' : '' }}">
                                 <input onkeyup="check_availability()" placeholder="Name" id="name" type="text" class="form-control" name="name" value="{{ old('name') }}">
 
@@ -242,7 +235,7 @@
                                 @endif
                             </div>
 
-                            <div class="form-group{{ $errors->has('services') ? ' has-error' : '' }}">
+                            <div class="col-md-12 row form-group{{ $errors->has('services') ? ' has-error' : '' }}">
                                 <label for="services" class="control-label">Services</label>
                                 <div class="col-md-12">
                                     @foreach($services as $service)
@@ -251,7 +244,6 @@
                                             <label style="font-weight: normal !important;" for="service_{{$service->id}}" class="col-md-10 control-label">{{$service->name}}</label>
                                         </div>
                                     @endforeach
-                                    <br/><br/>
                                 </div>
 
                                 @if ($errors->has('services'))
@@ -276,7 +268,7 @@
 
                             <div class="form-group{{ $errors->has('start_time') ? ' has-error' : '' }}">
                                 <label for="start_time" class="control-label">Start Time</label>
-                                <input name="start_time" id="start_time" type='text' class="form-control" value="{{ old('start_time') }}"/>
+                                <input onkeyup="$(function () { check_availability(); check_stylist_availability(); })" name="start_time" placeholder="13:32:22" id="start_time" type='time' class="form-control" value="{{ old('start_time') }}"/>
 
                                 @if ($errors->has('start_time'))
                                     <span class="help-block">
@@ -321,7 +313,7 @@
                         </div>
 
                         <div class="">
-                            <button disabled id="create_booking" type="submit" class="col-md-12  btn btn-success">
+                            <button disabled id="create_booking" type="submit" class="col-md-12  btn btn-danger">
                                 Place Booking
                             </button>
                         </div>
@@ -342,6 +334,9 @@
                 check_availability();
             });
 
+            var start_time = new Date();
+            $('#start_time').val(start_time.getHours()+":"+start_time.getMinutes()+":"+start_time.getSeconds());
+
             var pickaday = new Pikaday(
             {
                 field: document.getElementById('start_date'),
@@ -354,11 +349,6 @@
                     check_stylist_availability();
                 }
             });
-
-            $( "#start_time" ).timeDropper({
-                format: 'H:mm'
-            });
-
             pickaday.setDate(new Date("{{old('start_date')}}"));
         });
 
@@ -409,7 +399,7 @@
             if(services != "" && $('#stylist').val() != "" && $('#start_date').val() != "" && $('#start_time').val() != "") {
                 if ($('#customer').val() != "") {
                     avail = 1;
-                } else if($('#name').val() != "" && $('#email_address').val() != "" && $('#phone_number').val() != "" && $('#next_reminder').val() != "") {
+                } else if($('#name').val() != "" && $('#email_address').val() != "" && $('#phone_number').val() != "") {
                     avail = 1;
                 } else {
                     avail = 0;
@@ -428,6 +418,8 @@
                 $('#availability_content').html('');
 
                 document.getElementById("create_booking").disabled = true;
+                $("#create_booking").removeClass("btn-success");
+                $("#create_booking").addClass("btn-danger");
             } else {
                 $('#availability_heading').html(
                         "Booking Confirmation for : "+$('#start_date').val()
@@ -436,6 +428,8 @@
                 $('#availability_content').html('');
 
                 document.getElementById("create_booking").disabled = true;
+                $("#create_booking").removeClass("btn-success");
+                $("#create_booking").addClass("btn-danger");
 
                 var customer_id;
                 if ($('#customer').val() == "") {
@@ -444,7 +438,7 @@
                     customer_id = $('#customer').val();
                 }
                 $.ajax({
-                    url: '/availability/'+$('#stylist').val()+'/'+customer_id+'/'+$('#start_date').val()+' '+$('#start_time').val()+':00/'+services,
+                    url: '/availability/'+$('#stylist').val()+'/'+customer_id+'/'+$('#start_date').val()+' '+$('#start_time').val()+'/'+services,
                     type: 'get',
                     dataType: 'json',
                     success: function(data) {
@@ -478,9 +472,27 @@
 
                         if(data.available) {
                             $('#availability_content').html('Available <i class="fa fa-check"></i>');
+                            $("#create_booking").addClass("btn-success");
+                            $("#create_booking").removeClass("btn-danger");
                         } else {
                             $('#availability_content').html('Not Available <i class="fa fa-close"></i>');
+                            $("#create_booking").removeClass("btn-success");
+                            $("#create_booking").addClass("btn-danger");
                         }
+                    }, error: function(data){
+                        $('#availability_heading').html(
+                                "Error in one or more of the field. Format or data issue"
+                        );
+
+                        $('#end').val("This field will be auto populated");
+
+                        $('#availability_content').html('');
+
+                        document.getElementById("create_booking").disabled = true;
+                        $("#create_booking").removeClass("btn-success");
+                        $("#create_booking").addClass("btn-danger");
+
+                        $('#stylist_content').html('<p>Error in one or more of the field. Format or data issue. please correct or fill in all the fields to see the stylist availability</p>');
                     }
                 });
             }
@@ -515,7 +527,7 @@
             }
 
             $.ajax({
-                url: '/stylist_availability/'+$('#start_date').val()+' '+$('#start_time').val()+':00'+id,
+                url: '/stylist_availability/'+$('#start_date').val()+' '+$('#start_time').val()+id,
                 type: 'get',
                 dataType: 'json',
                 success: function(data) {
@@ -533,8 +545,37 @@
                             }
                         });
                     });
+                }, error: function(data) {
+                    $('#stylist_availability_content').html('');
                 }
             });
+        }
+
+        function customer_toggle(id) {
+            if(id == "existing_customer") {
+                $('#new_customer').show();
+                $('#existing_customer').hide();
+                $('#existing_customer_block').show();
+                $('#new_customer_block').hide();
+            } else if(id == "new_customer") {
+                $('#existing_customer').show();
+                $('#new_customer').hide();
+                $('#existing_customer_block').hide();
+                $('#new_customer_block').show();
+            }
+
+            $('#name').val("");
+            $('#email_address').val("");
+            $('#phone_number').val("");
+            $('#send_reminders').prop('checked', false);
+            $('#is_student').prop('checked', false);
+            $('#is_child').prop('checked', false);
+            $('#is_military').prop('checked', false);
+            $('#is_beard').prop('checked', false);
+
+            $('#customer').children('option').first().prop('selected', true)
+            $('#customer').trigger("chosen:updated");
+            $( ".chosen" ).chosen().change();
         }
     </script>
 @endsection
